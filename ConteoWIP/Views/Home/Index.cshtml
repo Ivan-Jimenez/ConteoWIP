@@ -29,3 +29,10 @@
         <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
     </div>
 </div>
+<div class="row">
+    @using(Html.BeginForm("Post", "Data", FormMethod.Post, new { enctype="multipart/form-data" }))
+    {
+        <input type="file" name="FileUpload" />
+        <input type="submit" name="Submit" id="Submit" value="Upload" />
+    }
+</div>
