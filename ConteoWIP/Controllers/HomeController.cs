@@ -9,36 +9,8 @@ namespace ConteoWIP.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Upload(HttpPostedFile file)
-        {
-            if (file != null && file.ContentLength > 0)
-            {
-                var fileName = Path.GetFileName(file.FileName);
-                var path = Path.Combine(Server.MapPath("~/Files/"), fileName);
-                file.SaveAs(path);
-            }
-
-            return RedirectToAction("UplaodedDocument");
-        }
+        public ActionResult Index() => RedirectToAction("Dashboard");
+        public ActionResult Dashboard() => View();
+        public PartialViewResult Count() => PartialView();
     }
 }

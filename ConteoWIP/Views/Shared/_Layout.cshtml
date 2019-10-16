@@ -1,43 +1,50 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <meta name="theme-color" content="#4C87C6">
+    <title>Conteo WIP - SAFRAN</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="~/Content/images/safran-report.jpg">
+    <link rel="icon" type="image/x-icon" sizes="32x32" href="~/Content/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" sizes="16x16" href="~/Content/images/favicon.ico">
+    <link rel="mask-icon" href="~/Content/images/safran-report.jpg" color="#2d89ef">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="theme-color" content="#2d89ef">
+    @*<link rel="manifest" href="~/Content/manifest.json" />*@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
-<body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                </ul>
-                <p class="nav navbar-text navbar-right">Hello, @User.Identity.Name!</p>
-            </div>
-        </div>
+<body class="bg-style" ng-app="template-app">
+    <div id="fondo"></div>
+    <div id="mytexto" class="spinner-text hide ">
+        <label id="lbltexto"></label>
     </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
+    <div id="myspinner" class="spinner-border hide" role="status">
+    </div>
+    <div>
+        <main>
+            @RenderBody()
+        </main>
     </div>
 
+    <div class="footer">
+        <p class="user-info"><ion-icon name="contact"></ion-icon>   Bienvenido, @User.Identity.Name.Split('\\')[1]!</p>
+    </div>
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/angular")
     @Scripts.Render("~/bundles/bootstrap")
+    <script src="https://unpkg.com/ionicons@4.5.5/dist/ionicons.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Oswald|Raleway&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
+    <!-- Optional: include a polyfill for ES6 Promises for IE11 and Android browser -->
+    @*<script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>*@
+    <script src="~/Scripts/sweetalert2.all.min.js"></script>
+    <script src="~/Scripts/sweetalert2.js"></script>
+    <link rel="stylesheet" href="~/Content/sweetalert2.min.css">
+
     @RenderSection("scripts", required: false)
 </body>
 </html>
