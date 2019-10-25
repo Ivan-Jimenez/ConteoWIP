@@ -3,437 +3,116 @@
 <div ng-controller="count-controller">
 
     <div class="index animated fadeInDown slow">
-        <h3>Conteo</h3>
+        <h3>Count</h3>
         <hr />
-        <div class="form-group">
-            <div class="row">
-                <div class="col-lg-1 align-content-md-end">
-                    <ion-icon name="search" size="large"></ion-icon>
-                </div>
-                <div class="col-lg-4">
-                    <input type="search" class="form-control width-box " placeholder="Buscar..." ng-model="search" />
-                </div>
 
-                <div class="col-lg-6">
-                    <center>
-                        <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#layoutModal" ng-click="loadLayout(1)">Planta 1</button>
-                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#layoutModal" ng-click="loadLayout(2)">Planta 2</button>
-                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#layoutModal" ng-click="loadLayout(3)">Planta 3</button>
-                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#layoutModal" ng-click="loadLayout(4)">Planta 4</button>
-                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#layoutModal" ng-click="loadLayout(5)">Planta 5</button>
-                        </div>
-                    </center>
-
-                </div>
-
-                <div class="col-lg-1">
-                    <button type="button" class="btn btn-azul" data-toggle="modal" data-target="#exampleModal" ng-click="clean()">
-                        <ion-icon name="add"></ion-icon> Nuevo
-                    </button>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="table-responsive overflow-auto" style="height: 500px;">
-            <table class="table table-sm table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th class="info-header"># Factura</th>
-                        <th class="info-header">Fecha Act.</th>
-                        <th class="info-header">Orden de Compra</th>
-                        <th class="info-header">Division</th>
-                        <th class="info-header"># Serie</th>
-                        <th class="info-header">Costo Actual</th>
-                        <th class="info-header">Localización</th>
-                        <th class="info-header"># Activo</th>
-                        <th class="info-header">Etiqueta</th>
-                        <th class="info-header">Capex #</th>
-                        <th class="info-header">Nombre</th>
-                        <th class="info-header">Desc.</th>
-                        <th class="info-header">Comentarios</th>
-                        <th class="info-header"></th>
-                        <th class="info-header"></th>
-                        <th class="info-header"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="item in examples | filter : search">
-                        <td class="info-table">
-                            <span class="info-span">
-                                <ion-icon name="logo-buffer"></ion-icon> {{item.Factura}}
-                            </span>
-                        </td>
-                        <td class="info-table">{{item.ActivationDate}}</td>
-                        <td class="info-table">{{item.OrdenCompra}}</td>
-                        <td class="info-table">{{item.Division}}</td>
-                        <td class="info-table">{{item.SerialNumber}}</td>
-                        <td class="info-table">{{item.CostoActual}}</td>
-                        <td class="info-table">{{item.Localizacion}}</td>
-                        <td class="info-table">{{item.NoActivo}}</td>
-                        <td class="info-table">{{item.Etiqueta}}</td>
-                        <td class="info-table">{{item.Capex}}</td>
-                        <td class="info-table">{{item.Name}}</td>
-                        <td class="info-table">{{item.Description}}</td>
-                        <td class="info-table">{{item.Comment}}</td>
-                        <td>
-                            <button type="button" class="btn btn-azul" data-toggle="modal" data-placement="top" data-target="#caratulaModal" title="Ver" ng-click="assetInfo(item.NoActivo)">
-                                <ion-icon name="eye"></ion-icon>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-verde" data-placement="top" title="Editar" data-toggle="modal" data-target="#exampleModal" ng-click="select(item.NoActivo)">
-                                <ion-icon name="create"></ion-icon>
-                            </button>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-rojo" data-toggle="tooltip" data-placement="top" title="Eliminar" ng-click="delete(item.NoActivo)">
-                                <ion-icon name="trash"></ion-icon>
-                            </button>
-                        </td>
-
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="col-md-12 text-center">
-            <ul class="pagination pagination-lg pager" id="myPager"></ul>
-        </div>
-        <!-- Modal -->
-
-
-        <div class="btn-group">
-            <button class="btn btn-naranja" data-toggle="modal" data-target="#fileModal"><ion-icon name="cloud-upload">   </ion-icon> Upload   </button>
-            <button class="btn btn-verde" ng-click="downloadNationalsData()"><ion-icon name="cloud-download"></ion-icon> Download</button>
-        </div>
-
-    </div>
-
-    @* New/Update asset modal *@
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" autofocus>
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h3 class="modal-title" id="exampleModalLabel" ng-model="modal_title">+Nuevo Activo</h3>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <center class="modal-body">
-                    <div class="container-fluid">
-                        <form id="newAssetForm" name="nuevoForm" novalidate>
-
-                            <div class="form-card">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group" ng-class="{ 'has-error' : nuevoForm.no_asset.$invalid && !nuevoForm.no_asset.$pristine }">
-                                            <label>No Asset</label>
-                                            <input type="text" class="form-control width-box" name="no_asset" ng-model="no_asset" required />
-                                            <p ng-show="nuevoForm.no_asset.$invalid && !nuevoForm.no_asset.$pristine" class="text-danger">Campo Obligatorio.</p>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Year Date Depr. Linear</label>
-                                            <input type="text" class="form-control width-box" name="division" ng-model="year_linear" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Division</label>
-                                            <input type="text" class="form-control width-box" name="division" ng-model="division" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Text Line 1</label>
-                                            <input type="text" class="form-control width-box" name="textline1" ng-model="textline1" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Accounting Dimension 6</label>
-                                            <input class="form-control width-box" name="dimension6" ng-model="dimension6" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Accounting Dimension 2</label>
-                                            <input class="form-control width-box" name="dimension4" ng-model="dimension2" />
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Location</label>
-                                            <input type="text" class="form-control width-box" name="location" ng-model="location" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Status</label>
-                                            <input type="text" class="form-control width-box" name="status" ng-model="status" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Name</label>
-                                            <input type="text" class="form-control width-box" name="name" ng-model="name" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Lifetime(months)</label>
-                                            <input type="text" class="form-control width-box" name="lifetime" ng-model="lifetime" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>PhysicalInventory</label>
-                                            <input type="text" class="form-control width-box" name="price" ng-model="inventory" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Acq. Cost</label>
-                                            <input type="text" class="form-control width-box" name="cost" ng-model="cost" />
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-
-                                        <div class="form-group">
-                                            <label>Forecast Linear</label>
-                                            <input type="text" class="form-control width-box" name="linear" ng-model="forecast_linear" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Acom. Depr. Linear</label>
-                                            <input type="text" class="form-control width-box" name="derogatory" ng-model="acomulated_linear" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Acq. Date</label>
-                                            <input type="text" class="form-control width-box" name="finalStatus" ng-model="date" />
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Activation Date</label>
-                                            <input type="text" class="form-control width-box" name="activationDate" ng-model="activation_date" />
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Serial</label>
-                                            <input type="text" class="form-control width-box" name="finalStatus" ng-model="serial" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Comment</label>
-                                            <textarea type="text" class="form-control width-box" name="comment" ng-model="comment" />
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-
-                        </form>
-
-                        <div class="divAdjunto">
-                            <form id="assetImage">
-                                <div class="form-group">
-                                    <input id="asset_image" class="custom-file-input" type="file" name="asset_image" />
-                                    <label id="asset_label" for="asset_image" class="custom-file-label">Seleccionar Imagen</label>
-                                </div>
-                            </form>
-                        </div>
-
-                    </div>
-
-
-
-
-                    <center>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-rojo" data-dismiss="modal" ng-click="clean()"><ion-icon name="ios-return-left"></ion-icon> Cerrar</button>
-                            <button type="button" class="btn btn-azul" data-dismiss="modal" ng-click="addorupdate()" ng-disabled="nuevoForm.$invalid"><ion-icon name="md-checkmark"></ion-icon> Guardar</button>
-                        </div>
-                    </center>
-
-            </div>
-        </div>
-        @*<div class="modal-footer">
-                <div class="row">
-                    <div class="col-md-8"></div>
-                    <div class="col-md-4">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal" ng-click="clean()"><ion-icon name="ios-return-left"></ion-icon> Cerrar</button>
-                            <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="addorupdate()" ng-disabled="nuevoForm.$invalid"><ion-icon name="md-checkmark"></ion-icon> Guardar</button>
-                        </div>
-                    </div>
-                    <div class="col-md-3"></div>
-                </div>
-            </div>*@
-    </div>
-    @* Caratula Modal *@
-    <div class="modal fade" id="caratulaModal" tabindex="-1" role="dialog" aria-labelledby="caratulaModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="caratulaModalLabel">Información de Activo</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="text-center card-header" scope="col">No Factura</th>
-                                <th class="text-center card-header" scope="col">Fecha de Activación</th>
-                                <th class="text-center card-header" scope="col">Orden de Compra</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th class="text-center"><a>{{ asset_info.NoActivo }}</a></th>
-                                <th class="text-center">{{ asset_info.ActivationDate }}</th>
-                                <th class="text-center"></th>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="text-center card-header" scope="col">División</th>
-                                <th class="text-center card-header" scope="col">Nùmero de Serie</th>
-                                <th class="text-center card-header" scope="col">Costo Actual</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th class="text-center">{{ asset_info.Division }}</th>
-                                <th class="text-center">{{ asset_info.SerialNumber }}</th>
-                                <th class="text-center"></th>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="text-center card-header" scope="col">Localización</th>
-                                <th class="text-center card-header" scope="col">Número de Activo (Mex)</th>
-                                <th class="text-center card-header" scope="col">Etiqueta</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th class="text-center">{{ asset_info.Location }}</th>
-                                <th class="text-center">{{ asset_info.NoActivo }}</th>
-                                <th class="text-center"></th>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="text-center card-header" scope="col">CAPEX #</th>
-                                <th class="text-center card-header" scope="col">Nombre</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th class="text-center"></th>
-                                <th class="text-center">{{ asset_info.Name }}</th>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-bordered" style="height: 150px;">
-                        <thead>
-                            <tr>
-                                <th class="text-center card-header" scope="col">Descripción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th class="text-center"></th>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="text-center card-header" scope="col">Imagen</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th class="text-center"><img src="{{ asset_info.Image }}" height="450" /></th>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-bordered" style="height: 150px;">
-                        <thead>
-                            <tr>
-                                <th class="text-center card-header" scope="col">Comentarios</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th class="text-center">{{ asset_info.Comment }}</th>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-rojo" data-dismiss="modal"><ion-icon name="ios-return-left"></ion-icon> Close</button>
-                    @*<button type="button" class="btn btn-primary">Save changes</button>*@
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Layouts Modal -->
-    <div class="modal fade" id="layoutModal" tabindex="-1" role="dialog" aria-labelledby="layoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="layoutModalLabel">Layout</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="layoutPlace"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-rojo" data-dismiss="modal">Close</button>
-                    @*<button type="button" class="btn btn-primary">Save changes</button>*@
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @* Choose file modal *@
-    <div class="modal fade" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="fileModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="fileModalLabel">Archivo</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="form_nationals">
-                        <div class="divAdjunto">
+        <div class="row">
+            <div class="col-lg-3">
+                @* Start selectCountForm *@
+                <center>
+                    <div class="form-card" ng-show="showSelectCountForm">
+                        <h3>Select Count</h3>
+                        <form name="selectCountForm">
                             <div class="form-group">
-                                <input id="input_file" class="custom-file-input" type="file" id="national_data_file" name="national_data_file" />
-                                <label id="label_file" for="national_data_file" class="custom-file-label">Select File</label>
+                                <label>Count Type</label>
+                                <select class="form-control custom-select" ng-model="countType" name="countType" required>
+                                    <option value="Count" selected>First</option>
+                                    <option value="Re-Count">Re-Count</option>
+                                </select>
                             </div>
+                            <div class="form-group">
+                                <label>Area/Line</label>
+                                <select class="form-control custom-select" ng-model="areaLine" required>
+                                    <option selected>CNC</option>
+                                    <option value="Composites">Composites</option>
+                                    <option value="Decor">Decor</option>
+                                    <option value="GABRIELA TRIMMER">GABRIELA TRIMMER</option>
+                                    <option value="LUP/Press/CNC">LUP/Press/CNC</option>
+                                    <option value="Metals">Metals</option>
+                                    <option value="Press">Press</option>
+                                    <option value="SAL #1">SAL #1</option>
+                                    <option value="SAL #2">SAL #2</option>
+                                    <option value="SAL #3">SAL #3</option>
+                                    <option value="SAL #5">SAL #5</option>
+                                    <option value="SAL #6">SAL #6</option>
+                                </select>
+                            </div>
+                            <center>
+                                <button class="btn btn-azul" type="button" ng-click="isAreaClosed(areaLine, countType)" ng-class="{'has error': selectCountForm.$invalid && selectCountForm.countType.$pristine } ">
+                                    Start Counting <ion-icon name="md-checkmark">
+                                </button>
+                            </center>
+                        </form>
+                    </div>
+                </center>
+                @* End selectCountForm *@
+
+                @* Start countForm *@
+                <center>
+                    <div class="form-card" ng-show="showCountForm">
+                        <div class="btn-group">
+                            <button class="btn btn-rojo" type="button" ng-click="cancelCounting()">Cancel <ion-icon name="close"></button>
+                            <button class="btn btn-amarillo" type="button" ng-click="finishCounting(areaLine, countType)">Finish <ion-icon name="md-checkmark"></button>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>*@
-                    <button type="button" class="btn btn-verde" data-dismiss="modal" ng-click="uploadNationalData()"><ion-icon name="md-checkmark"></ion-icon> Aceptar</button>
+                        <h3>{{countType}}ing {{areaLine}}</h3>
+                        <form name="countForm">
+                            <div class="form-group">
+                                <label>Order Number</label>
+                                <input class="form-control" ng-model="orderNumber">
+                            </div>
+                            <div class="form-group">
+                                <label>Counted</label>
+                                <input class="form-control" ng-model="counted">
+                            </div>
+                            <center>
+                                <div class="btn-group">
+                                    <button class="btn btn-azul" type="button" ng-click="count(orderNumber, counted, countType, areaLine)">Ok <ion-icon name="return-left"></button>
+                                </div>
+                            </center>
+                        </form>
+                    </div>
+                </center>
+                @* End countForm *@
+
+                @* Start Result Options *@
+                <center>
+                    <div class="form-card" ng-show="showFinishOptions">
+                        <h3>{{countType}} finished</h3>
+                        <button class="btn btn-naranja" type="button" ng-click="closeArea(areaLine, countType)">Close Area</button>
+                        <button class="btn btn-azul" type="button" ng-click="countAgain()">Count Again</button>
+                    </div>
+                </center>
+                @* End Result Options *@
+            </div>
+
+            @* Start Table *@
+            <div class="col-lg-9">
+                <div class="table-responsive overflow-auto" style="height: 500px;">
+                    <table class="table table-sm table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th class="info-header">Product</th>
+                                <th class="info-header">Product Name</th>
+                                <th class="info-header">Area/Line</th>
+                                <th class="info-header">Order Number</th>
+                                <th class="info-header">Ord Qty</th>
+                                <th class="info-header">Counted</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="product in products | filter: search">
+                                <th class="info-table">{{product.Product}}</th>
+                                <th class="info-table">{{product.ProductName}}</th>
+                                <th class="info-table">{{product.AreaLine}}</th>
+                                <th class="info-table">{{product.OrderNumber}}</th>
+                                <th class="info-table">{{product.OrdQty}}</th>
+                                <th class="info-table">{{product.Result}}</th>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+            @* End Table  *@
         </div>
     </div>
 </div>

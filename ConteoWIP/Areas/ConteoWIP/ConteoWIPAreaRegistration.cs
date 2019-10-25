@@ -11,7 +11,7 @@ namespace ConteoWIP.Areas.ConteoWIP
                 return "ConteoWIP";
             }
         }
-
+        
         public override void RegisterArea(AreaRegistrationContext context) 
         {
             context.MapRoute(

@@ -10,5 +10,7 @@ namespace ConteoWIP.Areas.ConteoWIP.Models
         }
 
         public DbSet<Count> Count { get; set; }
+        public DbSet<FirstCountStatus> FirstCountStatus { get; set; }
+        public DbSet<ReCountStatus> ReCountStatus { get; set; }
     }
 }

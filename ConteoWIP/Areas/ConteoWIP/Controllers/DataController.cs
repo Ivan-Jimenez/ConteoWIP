@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web;
@@ -18,30 +16,33 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
         public HttpResponseMessage Post()
         {
             HttpResponseMessage result = null;
-            var httpRequest = HttpContext.Current.Request;
+            //var httpRequest = HttpContext.Current.Request;
 
-            if (httpRequest.Files.Count > 0)
-            {
-                var docfiles = new List<string>();
-                foreach (string file in httpRequest.Files)
-                {
-                    var postedFile = httpRequest.Files[file];
-                    var filePath = HttpContext.Current.Server.MapPath("~/Files/" + "uploaded_data");
-                    postedFile.SaveAs(filePath);
-                    docfiles.Add(filePath);
-                }
-                result = Request.CreateResponse(HttpStatusCode.Created, UploadFile(docfiles[0]));
-            }
-            else
-            {
-                result = Request.CreateResponse(HttpStatusCode.BadRequest);
-            }
+            //if (httpRequest.Files.Count > 0)
+            //{
+            //    var docfiles = new List<string>();
+            //    foreach (string file in httpRequest.Files)
+            //    {
+            //        var postedFile = httpRequest.Files[file];
+            //        var filePath = HttpContext.Current.Server.MapPath("~/Files/" + "uploaded_data");
+            //        postedFile.SaveAs(filePath);
+            //        docfiles.Add(filePath);
+            //    }
+            //    result = Request.CreateResponse(HttpStatusCode.Created, UploadFile(docfiles[0]));
+            //}
+            //else
+            //{
+            //    result = Request.CreateResponse(HttpStatusCode.BadRequest);
+            //}
+            result = Request.CreateResponse(HttpStatusCode.Created, UploadFile("~/Files/uploaded_data.xlsx"));
             return result;
         }
 
         public HttpResponseMessage Get()
         {
-            return Request.CreateResponse(HttpStatusCode.Accepted, "It's Working!");
+            var result = Request.CreateResponse(HttpStatusCode.Created, UploadFile(HttpContext.Current.Server.MapPath("~")+"Files\\uploaded_data.xlsx"));
+            //return Request.CreateResponse(HttpStatusCode.Accepted, "It's Fucking Working!");
+            return result;
         }
 
         private string UploadFile(string file)
@@ -52,7 +53,7 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
             {
                 // Open SQL connection
                 SqlConnection connSql = new SqlConnection();
-                connSql.ConnectionString = ConfigurationManager.ConnectionStrings["SistemaAFEntities"].ConnectionString;
+                connSql.ConnectionString = ConfigurationManager.ConnectionStrings["ConteoWIPEntities"].ConnectionString;
                 connSql.Open();
 
                 // Open Excel connection
@@ -61,27 +62,28 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
                         "Extended Properties='Excel 12.0 Xml; HDR=YES'");
 
                 // Get the new data from the excel file
-                OleDbDataAdapter dataAdapter = new OleDbDataAdapter(@"SELECT * FROM [$ConteoWIP] WHERE [Product] IS NOT NULL;", connXls);
-                
+                OleDbDataAdapter dataAdapter = new OleDbDataAdapter(@"SELECT * FROM [Conteo$] WHERE [OperationNumber] IS NOT NULL;", connXls);
+                dataAdapter.Fill(ds);
                 SqlBulkCopy bulkCopy = new SqlBulkCopy(connSql);
                 bulkCopy.DestinationTableName = "Counts";
                 
                 // Map columns 
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Product"].ToString(), "Product");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Alias"].ToString(), "Alias");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Product Name"].ToString(), "ProductName");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Area/Line"].ToString(), "AreaLine");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Operation Number"].ToString(), "OperationNumber");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Operation description"].ToString(), "OperationDescription");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Order NUmber"].ToString(), "OrderNumber");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Ord qty"].ToString(), "OrdQty");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Physical 1"].ToString(), "Physical1");
+                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["ProductName"].ToString(), "ProductName");
+                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["AreaLine"].ToString(), "AreaLine");
+                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["OperationNumber"].ToString(), "OperationNumber");
+                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["OperationDescription"].ToString(), "OperationDescription");
+                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["OrderNumber"].ToString(), "OrderNumber");
+                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["OrdQty"].ToString(), "OrdQty");
+                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Physical"].ToString(), "Physical1");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Result"].ToString(), "Result");
+                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["FinalResult"].ToString(), "FinalResult");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Comments"].ToString(), "Comments");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Re-count"].ToString(), "ReCount");
+                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["ReCount"].ToString(), "ReCount");
                 
                 // Delete old data
-                new SqlCommand("DELETE Nacionales;", connSql).ExecuteNonQuery();
+                //new SqlCommand("DELETE Nacionales;", connSql).ExecuteNonQuery();
 
                 bulkCopy.WriteToServer(ds.Tables[0]);
                 return "OK";

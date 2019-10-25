@@ -1,7 +1,4 @@
-﻿using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Net;
+﻿using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
 using ConteoWIP.Areas.ConteoWIP.Models;
@@ -12,58 +9,86 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
     {
         private ConteoWIPEntities db = new ConteoWIPEntities();
 
-        // GET: api/Counts
-        public IQueryable<Count> GetCount()
+        public IQueryable<object> GetCount(string area, string count_type)
         {
-            return db.Count;
+            IQueryable<object> counts = null;
+            if (count_type.Equals("Count"))
+            {
+                counts = from count in db.Count
+                         where count.AreaLine == area
+                         select new
+                         {
+                             Product = count.Product,
+                             ProductName = count.ProductName,
+                             AreaLine = count.AreaLine,
+                             OrderNumber = count.OrderNumber,
+                             OrdQty = count.OrdQty,
+                             Result = count.Result
+                         };
+            }
+            else
+            {
+                counts = from count in db.Count
+                         where count.AreaLine == area
+                         select new
+                         {
+                             Product = count.Product,
+                             ProductName = count.ProductName,
+                             AreaLine = count.AreaLine,
+                             OrderNumber = count.OrderNumber,
+                             OrdQty = count.OrdQty,
+                             Result = count.ReCount
+                         };
+            }
+            return counts;
         }
 
-        // GET: api/Counts/5
-        [ResponseType(typeof(Count))]
-        public IHttpActionResult GetCount(int id)
-        {
-            Count count = db.Count.Find(id);
-            if (count == null)
-            {
-                return NotFound();
-            }
+        // Saves or updates an entry
+        //[ResponseType(typeof(void))]
+        //public IHttpActionResult PutCount(int id, Count count)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
+        //    if (id != count.OrderNumber)
+        //    {
+        //        return BadRequest();
+        //    }
+        //}
+
+        // Saves or updates the count of the product by id
+        public IHttpActionResult PutCount(int order, int counted, string count_type)
+        {
+            var count = db.Count.Where(c => c.OrderNumber == order).First();
+            if (count_type.Equals("Count"))
+            {
+                count.Result = counted;
+            }
+            else
+            {
+                count.ReCount = counted;
+            }
+            db.SaveChanges();
             return Ok(count);
         }
 
-        // PUT: api/Counts/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutCount(int id, Count count)
+        [ResponseType(typeof(Count))]
+        public IHttpActionResult GetCount(int order)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != count.ID)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(count).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CountExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            var count = from counts in db.Count
+                        where counts.OrderNumber == order
+                        select new
+                        {
+                            Product = counts.Product,
+                            ProductName = counts.ProductName,
+                            AreaLine = counts.AreaLine,
+                            OrderNumber = counts.OrderNumber,
+                            OrdQty = counts.OrdQty,
+                            Result = counts.ReCount
+                        };
+            return Ok(count);
         }
 
         // POST: api/Counts
@@ -78,7 +103,7 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
             db.Count.Add(count);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = count.ID }, count);
+            return CreatedAtRoute("DefaultApi", new { id = count.Product }, count);
         }
 
         // DELETE: api/Counts/5
@@ -108,7 +133,7 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
 
         private bool CountExists(int id)
         {
-            return db.Count.Count(e => e.ID == id) > 0;
+            return db.Count.Count(e => e.OrderNumber == id) > 0;
         }
     }
 }

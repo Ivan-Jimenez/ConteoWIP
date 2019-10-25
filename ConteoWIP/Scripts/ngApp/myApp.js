@@ -117,7 +117,7 @@ app.controller("SolicitudBajaSistemas-Controller", function ($scope, $http, $rou
             ocultarspinner();
         });
     }
-
+ 
     $scope.GetSolicitudBajas = function () {
         $http.get(`${uriApi}/api/SolicitudBajas`).then((response) => {
             $scope.solicitudBaja = response.data;

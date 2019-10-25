@@ -6,8 +6,8 @@ namespace ConteoWIP.Areas.ConteoWIP.Models
     public class Count
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ID { get; set; }
+        [Required(ErrorMessage = "{0} is required")]
+        public int OrderNumber { get; set; }
         [Required (ErrorMessage = "{0} is required")]
         public string Product { get; set; }
         [Required(ErrorMessage = "{0} is required")]
@@ -18,8 +18,6 @@ namespace ConteoWIP.Areas.ConteoWIP.Models
         public int OperationNumber { get; set; }
         [DataType(DataType.Text)]
         public string OperationDescription { get; set; }
-        [Required(ErrorMessage = "{0} is required")]
-        public int OrderNumber { get; set; }
         [Required(ErrorMessage = "{0} is required")]
         public int OrdQty { get; set; }
         public int Physical1 { get; set; }
