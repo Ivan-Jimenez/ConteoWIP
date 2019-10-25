@@ -1,0 +1,13 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="schi-web1zem_sqlexpress.ssh_wip"
+  DTS:DTSID="{A81DB59E-1983-468D-85DD-96CD8B313C8E}"
+  DTS:CreationName="SMOServer">
+  <DTS:ObjectData>
+    <SMOServerConnectionManager
+      ConnectionString="SqlServerName=schi-web1zem\sqlexpress;UseWindowsAuthentication=False;UserName=ssh_wip;">
+      <PassWord
+        Sensitive="1" xmlns="www.microsoft.com/SqlServer/Dts">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAhFpCnU8QI02viFyK9pSnqwAAAAACAAAAAAADZgAAwAAAABAAAABE0LYdM+wVssaEOf82V40YAAAAAASAAACgAAAAEAAAAIyxWau/141d/7lbtxOShl5YAAAAszwKCM3GXydV83Yx2h8uZoN+9IqFn2nVMhPfRsJ/1Zb7y7FVXhziS1QD7IohSqcZh+g62wAy3yRKLNntFHRgQmEMpsqoYZ7gzueg0Ek9rQCkMpew7U5lLBQAAACS7WMgtP2+XNEOB6zaON2gOjFq2g==</PassWord>
+    </SMOServerConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>
