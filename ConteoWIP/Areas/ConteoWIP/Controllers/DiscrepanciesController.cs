@@ -18,14 +18,14 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
             if (count_type.Equals("Count"))
             {
                 discrepancies = from count in _db.Count
-                                    where count.AreaLine == area && count.Result != count.OrdQty
+                                    where count.AreaLine == area && count.Physical1 != count.OrdQty
                                     select new
                                     {
-                                        Product = count.Product,
                                         ProductName = count.ProductName,
                                         AreaLine = count.AreaLine,
                                         OrderNumber = count.OrderNumber,
                                         OrdQty = count.OrdQty,
+                                        Counted = count.Physical1,
                                         Result = count.Result
                                     };
             }
@@ -35,12 +35,12 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
                                     where count.AreaLine == area && count.ReCount != count.OrdQty
                                     select new
                                     {
-                                        Product = count.Product,
                                         ProductName = count.ProductName,
                                         AreaLine = count.AreaLine,
                                         OrderNumber = count.OrderNumber,
                                         OrdQty = count.OrdQty,
-                                        Result = count.ReCount
+                                        Counted = count.ReCount,
+                                        Result = count.FinalResult
                                     };
             }
             return discrepancies;

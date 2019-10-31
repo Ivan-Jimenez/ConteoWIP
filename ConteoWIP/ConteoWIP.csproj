@@ -53,6 +53,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="EPPlus">
+      <HintPath>..\..\..\Users\Ivan.Jimenez\Desktop\EPPlus.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AI.DependencyCollector, Version=2.11.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.11.1\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
     </Reference>
@@ -78,7 +81,6 @@
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -189,25 +191,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201910161815124_FirstMigration.cs" />
-    <Compile Include="Migrations\201910161815124_FirstMigration.Designer.cs">
-      <DependentUpon>201910161815124_FirstMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910231628413_StatusTable.cs" />
-    <Compile Include="Migrations\201910231628413_StatusTable.Designer.cs">
-      <DependentUpon>201910231628413_StatusTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910231644199_EstatusTable.cs" />
-    <Compile Include="Migrations\201910231644199_EstatusTable.Designer.cs">
-      <DependentUpon>201910231644199_EstatusTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910231653215_StatusTables.cs" />
-    <Compile Include="Migrations\201910231653215_StatusTables.Designer.cs">
-      <DependentUpon>201910231653215_StatusTables.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910242323039_FixKeyCounts.cs" />
-    <Compile Include="Migrations\201910242323039_FixKeyCounts.Designer.cs">
-      <DependentUpon>201910242323039_FixKeyCounts.cs</DependentUpon>
+    <Compile Include="Migrations\201910301858492_Initial.cs" />
+    <Compile Include="Migrations\201910301858492_Initial.Designer.cs">
+      <DependentUpon>201910301858492_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -1053,6 +1039,7 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Files\uploaded_data.xlsx" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2-vsdoc.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -1134,6 +1121,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\Count.cshtml" />
     <Content Include="Views\Home\Dashboard.cshtml" />
+    <Content Include="Views\Home\Conciliation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1169,24 +1157,12 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201910161815124_FirstMigration.resx">
-      <DependentUpon>201910161815124_FirstMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910231628413_StatusTable.resx">
-      <DependentUpon>201910231628413_StatusTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910231644199_EstatusTable.resx">
-      <DependentUpon>201910231644199_EstatusTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910231653215_StatusTables.resx">
-      <DependentUpon>201910231653215_StatusTables.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910242323039_FixKeyCounts.resx">
-      <DependentUpon>201910242323039_FixKeyCounts.cs</DependentUpon>
-    </EmbeddedResource>
+    <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Scripts\index.d.ts" />
+    <EmbeddedResource Include="Migrations\201910301858492_Initial.resx">
+      <DependentUpon>201910301858492_Initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

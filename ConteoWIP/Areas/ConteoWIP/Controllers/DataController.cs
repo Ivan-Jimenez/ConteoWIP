@@ -1,12 +1,17 @@
-﻿using System;
+﻿using OfficeOpenXml;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace ConteoWIP.Areas.ConteoWIP.Controllers
 {
@@ -16,24 +21,6 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
         public HttpResponseMessage Post()
         {
             HttpResponseMessage result = null;
-            //var httpRequest = HttpContext.Current.Request;
-
-            //if (httpRequest.Files.Count > 0)
-            //{
-            //    var docfiles = new List<string>();
-            //    foreach (string file in httpRequest.Files)
-            //    {
-            //        var postedFile = httpRequest.Files[file];
-            //        var filePath = HttpContext.Current.Server.MapPath("~/Files/" + "uploaded_data");
-            //        postedFile.SaveAs(filePath);
-            //        docfiles.Add(filePath);
-            //    }
-            //    result = Request.CreateResponse(HttpStatusCode.Created, UploadFile(docfiles[0]));
-            //}
-            //else
-            //{
-            //    result = Request.CreateResponse(HttpStatusCode.BadRequest);
-            //}
             result = Request.CreateResponse(HttpStatusCode.Created, UploadFile("~/Files/uploaded_data.xlsx"));
             return result;
         }
@@ -41,8 +28,51 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
         public HttpResponseMessage Get()
         {
             var result = Request.CreateResponse(HttpStatusCode.Created, UploadFile(HttpContext.Current.Server.MapPath("~")+"Files\\uploaded_data.xlsx"));
-            //return Request.CreateResponse(HttpStatusCode.Accepted, "It's Fucking Working!");
             return result;
+        }
+
+        // Download data as an excel document
+        [ResponseType(typeof(void))]
+        public HttpResponseMessage Get(string area, string count_type)
+        {
+            var httpRequest = HttpContext.Current.Request;
+            var name = httpRequest.Params[0];
+            ExportDataToExcel(name, count_type);
+            return Request.CreateResponse(HttpStatusCode.Accepted, "The file has been downloaded!");
+        }
+
+        private void ExportDataToExcel(string area, string count_type)
+        {
+            string conn = ConfigurationManager.ConnectionStrings["ConteoWIPEntities"].ConnectionString;
+            using (SqlConnection sqlConn = new SqlConnection(conn))
+            {
+                string query;
+
+                if (count_type.Equals("Count"))
+                    query = String.Format("SELECT Product, OrderNumber, OperationDescription, OrdQty FROM Counts WHERE AreaLine='{0}' AND Physical1 != OrdQty;", area);
+                else
+                    query = String.Format("SELECT Product, OrderNumber, OperationDescription, OrdQty FROM Counts WHERE AreaLine='{0}' AND ReCount != OrdQty;", area);
+
+                SqlCommand cmmd = new SqlCommand(query, sqlConn);
+                using (var adapter = new SqlDataAdapter(cmmd))
+                {
+                    var discrepancies = new DataTable();
+                    adapter.Fill(discrepancies);
+                    ExcelPackage excel = new ExcelPackage();
+                    var workSheet = excel.Workbook.Worksheets.Add(area);
+                    workSheet.Cells["A1"].LoadFromDataTable(discrepancies, true);
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        HttpContext.Current.Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        HttpContext.Current.Response.AddHeader("content-disposition", "attachment;  filename=" + area.ToLower() + "_discrepancies_data.xlsx");
+                        excel.SaveAs(memoryStream);
+                        memoryStream.WriteTo(HttpContext.Current.Response.OutputStream);
+                        HttpContext.Current.Response.Flush();
+                        HttpContext.Current.Response.End();
+                    }
+                }
+            }
         }
 
         private string UploadFile(string file)
