@@ -39,8 +39,11 @@ app.config(function ($routeProvider) {
         .when('/Count', {
             templateUrl: 'Count'
         })
-        .when('/Concilition', {
+        .when('/Conciliation', {
             templateUrl: 'Conciliation'
+        })
+        .when('/Admin', {
+            templateUrl: 'Admin'
         })
         .otherwise({
             templateUrl: 'Count'
@@ -52,6 +55,10 @@ app.config(function ($routeProvider) {
  ******************************** Count Controller ********************************************
  **********************************************************************************************/
 app.controller("count-controller", ($scope, $http) => {
+
+    var countingArea = "";
+    var countingType = "";
+
     // Initializa add modal
     //$("#addModal").modal("show");
     $("#addModal").modal({ show: false });
@@ -65,12 +72,24 @@ app.controller("count-controller", ($scope, $http) => {
     }
 
     function startCounting(area, countType) {
-        $http.get(`${uriApi}/api/Counts/?area=${area}&count_type=${countType}`, {
+        contingArea = area;
+        countingType = countingType;
+
+        var newArea = area;
+        if (area.split('#')[0] === "SAL ") {
+            newArea = "SAL_" + area.split('#')[1];
+        }
+        $http.get(`${uriApi}/api/Counts/?area=${newArea}&count_type=${countType}`, {
             OrderNumber: $scope.order_number,
             Product: $scope.product,
         }).then((response) => {
             $scope.products = response.data;
         }).catch(error => {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: error.data,
+            });
             console.log(error.data);
         });
 
@@ -85,11 +104,11 @@ app.controller("count-controller", ($scope, $http) => {
         $http.get(`${uriApi}/api/Counts/?order=${order}`).then((res) => {
             console.log("count Result Exist => ", res);
             if (res.data.length > 0) {
-                saveCount($scope.order_number, $scope.counted, $scope.countType);
+                //saveCount(order, $scope.counted, $scope.countType);
                 $scope.orderNumber = "";
                 $scope.counted = "";
                 if (res.data[0].AreaLine === area) {
-                    saveCount(order, counted, countType);
+                    saveCount(order, counted, countType, area);
                     $http.get(`${uriApi}/api/Counts/?area=${area}&count_type=${countType}`, {
                         OrderNumber: $scope.order_number,
                         Product: $scope.product,
@@ -128,7 +147,7 @@ app.controller("count-controller", ($scope, $http) => {
                 }
             } else {
                 Swal.fire({
-                    title: order + 'Not Found',
+                    title: order + ' Not Found',
                     text: "Do you want to add it?",
                     type: 'warning',
                     showCancelButton: true,
@@ -152,6 +171,11 @@ app.controller("count-controller", ($scope, $http) => {
             }
         }).catch((error) => {
             console.log("count Exist Error => ", error);
+            Swal.fire({
+                type: 'error',
+                title: 'Error',
+                text: error.statusText,
+            });
             if (error.status === 404) {
                 alert("product not found");
             }
@@ -161,8 +185,8 @@ app.controller("count-controller", ($scope, $http) => {
 
     $scope.addOrUpdate = () => {
         var comment = "";
-        if ($scope.modalTitle === "New") comment = "New@" + $scope.areLine + "@";
-        else comment = "Found@" + $scope.areaLine + "@";
+        if ($scope.modalTitle === "New") comment = "New@" + $scope.areaLine + "@";
+        else comment = "Found@" + $scope.counted_form + "@" + $scope.areaLine + "@";
 
         $http.put(`${uriApi}/api/Counts/${$scope.order_number}`, {
             Product: $scope.product,
@@ -176,7 +200,7 @@ app.controller("count-controller", ($scope, $http) => {
             Comments: comment + $scope.comments,
         }).then((res) => {
             console.log("addOrUpdate Result => ", res.data);
-            saveCount($scope.order_number, $scope.counted, $scope.countType);
+            saveCount($scope.order_number, $scope.counted_form, $scope.countType, $scope.areaLine);
             $scope.orderNumber = "";
             $scope.counted = "";
             Swal.fire(
@@ -189,7 +213,7 @@ app.controller("count-controller", ($scope, $http) => {
             Swal.fire({
                 type: 'error',
                 title: 'Oops...',
-                text: error.data.message,
+                text: error.data,
             });
         });
     }
@@ -238,7 +262,7 @@ app.controller("count-controller", ($scope, $http) => {
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, add it!'
+            confirmButtonText: 'Yes, Close it!'
         }).then((result) => {
             if (result.value) {
                 if (countType === "Count") {
@@ -319,17 +343,29 @@ app.controller("count-controller", ($scope, $http) => {
         $scope.showComments = false;
     }
 
-    function saveCount(order, counted, countType) {
-        $http.put(`${uriApi}/api/Counts/?order=${order}&counted=${counted}&count_type=${countType}`).then((res) => {
+    function saveCount(order, counted, countType, area) {
+        $http.put(`${uriApi}/api/Counts/?order=${order}&counted=${counted}&count_type=${countType}&area=${area}`).then((res) => {
             console.log("saveCount Result => ", res.data);
-            Swal.fire(
-                "Counted!",
-                "The count for "+order+" was saved successfully.",
-                "success"
-            );
-            
+            if (res.data === "StatusOK") {
+                Swal.fire(
+                    "Status OK!",
+                    "This asset is already counted and has an Ok Status.",
+                    "warning"
+                );
+            } else {
+                Swal.fire(
+                    "Counted!",
+                    "The count for " + order + " was saved successfully.",
+                    "success"
+                );
+            }
         }).catch(error => {
             console.log(error);
+            Swal.fire({
+                type: 'error',
+                title: 'Error...',
+                text: error.statusText,
+            });
         });
     }
 
@@ -349,15 +385,59 @@ app.controller("count-controller", ($scope, $http) => {
 });
 
 /**********************************************************************************************
- ******************************** Count Controller ********************************************
+ ******************************** Conciliation Controller *************************************
  **********************************************************************************************/
 
 app.controller("conciliation-controller", ($scope, $http) => {
 
-    $http.get(`${uriApi}/api/Counts/${id}`).then((res) => {
+    //showAll();
+
+    $http.get(`${uriApi}/api/Counts/`).then((res) => {
         $scope.products = res.data;
     }).catch((error) => {
         snackbar(error.data);
     });
-    
+
+    $scope.showAll = () => {
+        showAll();
+    }
+
+    $scope.showDiscrepancies = () => {
+        $http.get(`${uriApi}/api/Discrepancies/?area=${$scope.area_line}&count_type=ReCount`).then((res) => {
+            $scope.products = res.data;
+        }).catch((error) => {
+            snackbar(error.data);
+        });
+    }
+
+    $scope.select = (order) => {
+        $scope.orderConciliation = order;
+    }
+
+    $scope.saveConciliation = (order, conciliation) => {
+        $http.put(`${uriApi}/api/Counts/?order=${order}&conciliation=${conciliation}`).then((res) => {
+            alert("saved");
+        }).catch((error) => {
+            snackbar(error.data);
+        });
+    }
+
+    /*************************************************************************************
+     *************************** Util Functions ******************************************
+     *************************************************************************************/
+
+    function showAll() {
+        $http.get(`${uriApi}/api/Counts/?area=${$scope.area_line}&count_type=Count`).then((res) => {
+            $scope.products = res.data;
+        }).catch((error) => {
+            snackbar(error.data);
+        });
+    }
+});
+
+/**********************************************************************************************
+ ********************************* Admin Controller *******************************************
+ **********************************************************************************************/
+app.controller("admin-controller", ($scope, $http) => {
+
 });

@@ -191,9 +191,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201910301858492_Initial.cs" />
-    <Compile Include="Migrations\201910301858492_Initial.Designer.cs">
-      <DependentUpon>201910301858492_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201910312257196_First.cs" />
+    <Compile Include="Migrations\201910312257196_First.Designer.cs">
+      <DependentUpon>201910312257196_First.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -1039,6 +1039,7 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Files\uploaded_data.xlsx" />
+    <Content Include="Files\data_wip_and_bins.xlsx" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2-vsdoc.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -1122,6 +1123,7 @@
     <Content Include="Views\Home\Count.cshtml" />
     <Content Include="Views\Home\Dashboard.cshtml" />
     <Content Include="Views\Home\Conciliation.cshtml" />
+    <Content Include="Views\Home\Admin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1160,8 +1162,8 @@
     <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201910301858492_Initial.resx">
-      <DependentUpon>201910301858492_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201910312257196_First.resx">
+      <DependentUpon>201910312257196_First.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

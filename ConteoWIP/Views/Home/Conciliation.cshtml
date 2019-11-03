@@ -3,8 +3,45 @@
         <h3>Conciliation</h3>
         <hr />
 
+    <div class="row">
+        <div class="col-lg-1 align-content-lg-end">
+            <ion-icon name="search" size="large"></ion-icon>
+        </div>
+        <div class="col-lg-6">
+            <input type="search" class="form-control width-box " placeholder="Search..." ng-model="search" />
+        </div>
+        <div class="col-lg-3">
+            @* Starts area select *@
+            <div class="form-group" ng-class="{ 'has-error' : addForm.area_line.$invalid && !addForm.area_line.$pristine }">
+                <label>Area/Line</label>
+                <select class="form-control custom-select" ng-model="area_line" name="area_line" ng-disabled="disablearea_line" required>
+                    <option selected>CNC</option>
+                    <option value="Composites">Composites</option>
+                    <option value="Decor">Decor</option>
+                    <option value="GABRIELA TRIMMER">GABRIELA TRIMMER</option>
+                    <option value="LUP/Press/CNC">LUP/Press/CNC</option>
+                    <option value="Metals">Metals</option>
+                    <option value="Press">Press</option>
+                    <option value="SAL #1">SAL #1</option>
+                    <option value="SAL #2">SAL #2</option>
+                    <option value="SAL #3">SAL #3</option>
+                    <option value="SAL #5">SAL #5</option>
+                    <option value="SAL #6">SAL #6</option>
+                </select>
+                <p ng-show="selectCountForm.areaLine.$invalid && !selectCountForm.areaLine.$pristine" class="text-danger">Select Count.</p>
+            </div>
+            @* Ends area select *@
+        </div>
+        <div class="col-lg-2 align-content-end">
+            <div class="btn-group">
+                <button class="btn btn-verde" type="button" ng-click="showAll()">Show All <ion-icon name="close"></button>
+                <button class="btn btn-naranja" type="button" ng-click="showDiscrepancies()">Discrepancies <ion-icon name="md-checkmark"></button>
+            </div>
+        </div>
+    </div>
+        
         <div class="row">
-            @* Start Concilition Table *@
+            @* Start Conciliation Table *@
             <div class="table-responsive overflow-auto" style="height: 500px">
                 <table class="table table-sm table-striped table-hover">
                     <thead>
@@ -40,13 +77,13 @@
                             <th class="info-table">{{product.Physical1}}</th>
                             <th class="info-table">{{product.Result}}</th>
                             <th class="info-table">{{product.Comments}}</th>
-                            <th class="info-table">{{product.Recount}}</th>
+                            <th class="info-table">{{product.ReCount}}</th>
                             <th class="info-table">{{product.FinalResult}}</th>
                             <th class="info-table">{{product.Status}}</th>
                             <th class="info-table">{{product.ConciliationUser}}</th>
                             <th class="info-table">{{product.StdCost}}</th>
                             <th class="info-table">{{product.TotalCost}}</th>
-                            <th class="info-table"></th>
+                            <th class="info-table"><button class="btn btn-naranja"><ion-icon name="construct" data-toggle="modal" data-target="#conciliationModal" ng-click="select(product.OrderNumber)"></ion-icon></button></th>
                         </tr>
                     </tbody>
                 </table>
@@ -54,4 +91,38 @@
             @* Ends Conciliation Table *@
         </div>
     </div>
+
+    @* Start conciliation modal *@
+    <div class="modal fade" id="conciliationModal" tabindex="-1" role="dialog" aria-labelledby="conciliationModalLabel" aria-hiden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <center>
+                        <div class="form-card">
+                            <form name="conciliationForm" novalidate>
+                                <h3>Conciliation Order {{orderConciliation}}</h3>
+                                <hr />
+                                <div class="form-group" ng-class="{ 'has-error' : conciliationForm.conciliationResult.$invalid && !conciliationForm.conciliationResult.$pristine }">
+                                    <label>Conciliation Result</label>
+                                    <select class="form-control custom-select" ng-model="conciliationResult" name="conciliationResult" required>
+                                        <option value="Fixed">Fixed</option>
+                                        <option value="Can't Fix">Can't Fix</option>
+                                        <option value="Pending">Pending</option>
+                                    </select>
+                                    <p ng-show="selectCountForm.areaLine.$invalid && !selectCountForm.areaLine.$pristine" class="text-danger">Select Count.</p>
+
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-naranja" data-dismiss="modal">Cancel <ion-icon name="ios-return-left"></ion-icon></button>
+                                        <button type="button" class="btn btn-default btn-azul" ng-click="saveConciliation(orderConciliation, conciliationResult)" ng-disabled="conciliationForm.$invalid" data-dismiss="modal">Save <ion-icon name="md-checkmark"></ion-icon></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* Ends concilition modal *@
+
 </div>

@@ -28,21 +28,27 @@ namespace ConteoWIP.Areas.ConteoWIP.Models
         [Required(ErrorMessage = "{0} is required")]
         public int OrdQty { get; set; }
 
-        public int Physical1 { get; set; }
+        public int? Physical1 { get; set; } = 0;
 
-        public int Result { get; set; }
+        public int? Result { get; set; } = 0;
 
         [DataType(DataType.Text)]
         public string Comments { get; set; }
 
-        public int ReCount { get; set; }
+        public int? ReCount { get; set; } = 0;
 
-        public int FinalResult { get; set; }
+        public int? FinalResult { get; set; } = 0;
 
         [DataType(DataType.Text)]
         public string Status { get; set; }
 
         [DataType(DataType.Text)]
         public string ConciliationUser { get; set; }
+
+        [Column(TypeName = "Money")]
+        public int StdCost { get; set; }
+
+        [Column(TypeName = "Money")]
+        public int? TotalCost { get; set; }
     }
 }

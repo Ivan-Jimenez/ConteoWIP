@@ -45,7 +45,7 @@
                                     <option value="LUP/Press/CNC">LUP/Press/CNC</option>
                                     <option value="Metals">Metals</option>
                                     <option value="Press">Press</option>
-                                    <option value="SAL #1">SAL #1</option>
+                                    <option value="SAL #1">SAL \#1</option>
                                     <option value="SAL #2">SAL #2</option>
                                     <option value="SAL #3">SAL #3</option>
                                     <option value="SAL #5">SAL #5</option>
@@ -129,7 +129,7 @@
                                 <th class="info-table">{{product.OrderNumber}}</th>
                                 <th class="info-table">{{product.OrdQty}}</th>
                                 <th class="info-table">{{product.Counted}}</th>
-                                <th class="info-table" ng-class="{'text-danger': product.Result != 0}">{{product.Result}}</th>
+                                <th class="info-table" ng-class="{'text-danger': product.ResultCount != 0}">{{product.ResultCount}}</th>
                             </tr>
                         </tbody>
                     </table>

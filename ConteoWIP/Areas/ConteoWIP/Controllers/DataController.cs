@@ -27,7 +27,7 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
 
         public HttpResponseMessage Get()
         {
-            var result = Request.CreateResponse(HttpStatusCode.Created, UploadFile(HttpContext.Current.Server.MapPath("~")+"Files\\uploaded_data.xlsx"));
+            var result = Request.CreateResponse(HttpStatusCode.Created, UploadFile(HttpContext.Current.Server.MapPath("~")+"Files\\data_wip_and_bins.xlsx"));
             return result;
         }
 
@@ -92,7 +92,7 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
                         "Extended Properties='Excel 12.0 Xml; HDR=YES'");
 
                 // Get the new data from the excel file
-                OleDbDataAdapter dataAdapter = new OleDbDataAdapter(@"SELECT * FROM [Conteo$] WHERE [OperationNumber] IS NOT NULL;", connXls);
+                OleDbDataAdapter dataAdapter = new OleDbDataAdapter(@"SELECT * FROM [WIP$] WHERE [OperationNumber] IS NOT NULL;", connXls);
                 dataAdapter.Fill(ds);
                 SqlBulkCopy bulkCopy = new SqlBulkCopy(connSql);
                 bulkCopy.DestinationTableName = "Counts";
@@ -111,9 +111,10 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["FinalResult"].ToString(), "FinalResult");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Comments"].ToString(), "Comments");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["ReCount"].ToString(), "ReCount");
-                
+                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["StdCost"].ToString(), "StdCost");
+
                 // Delete old data
-                //new SqlCommand("DELETE Nacionales;", connSql).ExecuteNonQuery();
+                new SqlCommand("DELETE Counts;", connSql).ExecuteNonQuery();
 
                 bulkCopy.WriteToServer(ds.Tables[0]);
                 return "OK";

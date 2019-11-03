@@ -9,7 +9,7 @@ namespace ConteoWIP.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(ConteoWIP.Areas.ConteoWIP.Models.ConteoWIPEntities context)

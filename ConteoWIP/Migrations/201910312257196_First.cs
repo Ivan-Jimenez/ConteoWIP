@@ -3,7 +3,7 @@ namespace ConteoWIP.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Initial : DbMigration
+    public partial class First : DbMigration
     {
         public override void Up()
         {
@@ -20,13 +20,15 @@ namespace ConteoWIP.Migrations
                         OperationNumber = c.Int(nullable: false),
                         OperationDescription = c.String(),
                         OrdQty = c.Int(nullable: false),
-                        Physical1 = c.Int(nullable: false),
-                        Result = c.Int(nullable: false),
+                        Physical1 = c.Int(),
+                        Result = c.Int(),
                         Comments = c.String(),
-                        ReCount = c.Int(nullable: false),
-                        FinalResult = c.Int(nullable: false),
+                        ReCount = c.Int(),
+                        FinalResult = c.Int(),
                         Status = c.String(),
                         ConciliationUser = c.String(),
+                        StdCost = c.Decimal(nullable: false, storeType: "money"),
+                        TotalCost = c.Decimal(storeType: "money"),
                     })
                 .PrimaryKey(t => t.ID);
             

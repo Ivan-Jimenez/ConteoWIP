@@ -12,42 +12,75 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
     {
         private ConteoWIPEntities db = new ConteoWIPEntities();
 
+        // Get all products
         public IQueryable<Count> GetCount()
         {
             return db.Count;
         }
 
+        // Get products by area and count type
         public IQueryable<object> GetCount(string area, string count_type)
         {
+            var newArea = area;
+
+            if (area.Split('_')[0] == "SAL")
+            {
+                newArea = "SAL #" + area.Split('_')[1];
+            }
+
             IQueryable<object> counts = null;
             if (count_type.Equals("Count"))
             {
                 counts = from count in db.Count
-                         where count.AreaLine == area
+                         where count.AreaLine == newArea
                          select new
                          {
+                             OrderNumber = count.OrderNumber,
                              Product = count.Product,
+                             Alias = count.Alias,
                              ProductName = count.ProductName,
                              AreaLine = count.AreaLine,
-                             OrderNumber = count.OrderNumber,
+                             OperationNumber = count.OperationNumber,
+                             OperationDescription = count.OperationDescription,
                              OrdQty = count.OrdQty,
+                             Physical1 = count.Physical1,
+                             Comments = count.Comments,
+                             ReCount = count.ReCount,
+                             FinalResult = count.FinalResult,
+                             ResultCount = count.Result,
+                             ConciliationUser = count.ConciliationUser,
+                             StdCost = count.StdCost,
+                             TotalCost = count.TotalCost,
                              Counted = count.Physical1,
-                             Result = count.Result
+                             Result = count.Result,
+                             Status = count.Status
                          };
             }
             else
             {
                 counts = from count in db.Count
-                         where count.AreaLine == area
+                         where count.AreaLine == newArea && count.Status != "OK"
                          select new
                          {
+                             OrderNumber = count.OrderNumber,
                              Product = count.Product,
+                             Alias = count.Alias,
                              ProductName = count.ProductName,
                              AreaLine = count.AreaLine,
-                             OrderNumber = count.OrderNumber,
+                             OperationNumber = count.OperationNumber,
+                             OperationDescription = count.OperationDescription,
                              OrdQty = count.OrdQty,
+                             Physical1 = count.Physical1,
+                             Result = count.Result,
+                             Comments = count.Comments,
+                             ReCount = count.ReCount,
+                             FinalResult = count.FinalResult,
+                             ResultCount = count.FinalResult,
                              Counted = count.ReCount,
-                             Result = count.FinalResult
+                             ConciliationUser = count.ConciliationUser,
+                             StdCost = count.StdCost,
+                             TotalCost = count.TotalCost,
+                             Status = count.Status
                          };
             }
             return counts;
@@ -69,38 +102,103 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
             
             if (CountExists(id))
             {
-                db.Entry(count).State = EntityState.Modified;
+                //db.Entry(count).State = EntityState.Modified;
+                try
+                {
+                    var cnt = db.Count.Where(c => c.OrderNumber == count.OrderNumber).First();
+                    cnt.Comments = count.Comments;
+                    db.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
             }
             else
             {
                 db.Count.Add(count);
-            }
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
             }
 
             return StatusCode(HttpStatusCode.Accepted);
         }
 
+        // Saves or updates the conciliation user
+        public IHttpActionResult PutCount(int order, string conciliation)
+        {
+            var count = db.Count.Where(c => c.OrderNumber == order).First();
+            count.ConciliationUser = conciliation;
+            db.SaveChanges();
+            return Ok(count);
+        }
+
         // Saves or updates the count of the product by id
-        public IHttpActionResult PutCount(int order, int counted, string count_type)
+        public IHttpActionResult PutCount(int order, int counted, string count_type, string area)
         {
             var count = db.Count.Where(c => c.OrderNumber == order).First();
             if (count_type.Equals("Count"))
             {
-                count.Physical1 = counted;
-                count.Result = counted - count.OrdQty;
+                if (count.Physical1 == null)
+                {
+                    count.Physical1 = counted;
+                }
+                else if (count.AreaLine != area)
+                {
+                    count.Physical1 += counted;
+                }
+
+                count.Result = count.Physical1 - count.OrdQty;
+                count.TotalCost = count.Result * count.StdCost;
+                if (count.Physical1 == count.OrdQty)
+                {
+                    count.Status = "OK";
+                }
+                else if (count.Physical1 < count.OrdQty)
+                {
+                    count.Status = "Negative";
+                }
+                else
+                {
+                    count.Status = "Positive";
+                }
             }
             else
             {
-                count.ReCount = counted;
-                count.FinalResult = counted - count.OrdQty;
+                if (count.Status == "OK")
+                {
+                    return Ok("StatusOK");
+                }
+
+                if (count.ReCount == null)
+                {
+                    count.ReCount = counted;
+                }
+                else if (count.AreaLine != area) 
+                {
+                    count.ReCount += counted;
+                }
+
+                count.FinalResult = count.ReCount - count.OrdQty;
+                count.TotalCost = count.FinalResult * count.StdCost;
+                if (count.ReCount == count.OrdQty)
+                {
+                    count.Status = "OK";
+                }
+                else if (count.ReCount < count.OrdQty)
+                {
+                    count.Status = "Negative";
+                }
+                else
+                {
+                    count.Status = "Positive";
+                }
             }
             db.SaveChanges();
             return Ok(count);
@@ -124,37 +222,6 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
                             Result = counts.ReCount,
                             Comments = counts.Comments
                         };
-            return Ok(count);
-        }
-
-        // POST: api/Counts
-        [ResponseType(typeof(Count))]
-        public IHttpActionResult PostCount(Count count)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            db.Count.Add(count);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = count.OrderNumber }, count);
-        }
-
-        // DELETE: api/Counts/5
-        [ResponseType(typeof(Count))]
-        public IHttpActionResult DeleteCount(int id)
-        {
-            Count count = db.Count.Find(id);
-            if (count == null)
-            {
-                return NotFound();
-            }
-
-            db.Count.Remove(count);
-            db.SaveChanges();
-
             return Ok(count);
         }
 

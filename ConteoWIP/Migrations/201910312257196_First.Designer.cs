@@ -7,13 +7,13 @@ namespace ConteoWIP.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class EstatusTable : IMigrationMetadata
+    public sealed partial class First : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(EstatusTable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(First));
         
         string IMigrationMetadata.Id
         {
-            get { return "201910231644199_EstatusTable"; }
+            get { return "201910312257196_First"; }
         }
         
         string IMigrationMetadata.Source
