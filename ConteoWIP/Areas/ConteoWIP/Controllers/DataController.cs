@@ -49,9 +49,11 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
                 string query;
 
                 if (count_type.Equals("Count"))
-                    query = String.Format("SELECT Product, OrderNumber, OperationDescription, OrdQty FROM Counts WHERE AreaLine='{0}' AND Physical1 != OrdQty;", area);
+                    query = String.Format("SELECT Product, OrderNumber, OperationDescription, OrdQty FROM Counts WHERE AreaLine='{0}' AND Physical1 != OrdQty OR ISNULL(Physical1, 0) = 0;", area);
+                else if (count_type.Equals("All"))
+                    query = "SELECT * FROM Counts WHERE Status != 'OK' OR ISNULL(Status, 'Fuck')='Fuck';;";
                 else
-                    query = String.Format("SELECT Product, OrderNumber, OperationDescription, OrdQty FROM Counts WHERE AreaLine='{0}' AND ReCount != OrdQty;", area);
+                    query = String.Format("SELECT Product, OrderNumber, OperationDescription, OrdQty FROM Counts WHERE AreaLine='{0}' AND ReCount != OrdQty OR ISNULL(ReCount, 0) = 0;", area);
 
                 SqlCommand cmmd = new SqlCommand(query, sqlConn);
                 using (var adapter = new SqlDataAdapter(cmmd))
@@ -106,7 +108,7 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["OperationDescription"].ToString(), "OperationDescription");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["OrderNumber"].ToString(), "OrderNumber");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["OrdQty"].ToString(), "OrdQty");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Physical"].ToString(), "Physical1");
+                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Physical1"].ToString(), "Physical1");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Result"].ToString(), "Result");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["FinalResult"].ToString(), "FinalResult");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Comments"].ToString(), "Comments");

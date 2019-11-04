@@ -1,7 +1,7 @@
 ﻿<nav class="navbar fixed-top navbar-expand-lg navbar-light">
     <span class="navbar-brand" href="home.aspx">
         <img id="logo" src="~/Content/images/SAFRAN.png" height="40" class="d-inline-block align-top" alt="Logo">
-        Conteo WIP
+        Inventory
     </span>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -10,15 +10,24 @@
         <ul class="navbar-nav">
 
             @*<li class="nav-item"><a class="nav-link" href="#!/NationalsView"><ion-icon name="logo-buffer"></ion-icon>Nacionales</a></li>
-            <li class="nav-item"><a class="nav-link" href="#!/Foreign"><ion-icon name="logo-buffer"></ion-icon>Extranjeros</a></li>*@
+        <li class="nav-item"><a class="nav-link" href="#!/Foreign"><ion-icon name="logo-buffer"></ion-icon>Extranjeros</a></li>*@
             @*@if (User.IsInRole("Admin"))
-            {
-                <li class="nav-item"><a class="nav-link" href="#!/Users"><ion-icon name="ios-contacts"></ion-icon>   Usuarios</a></li>
-            }*@
+        {
+            <li class="nav-item"><a class="nav-link" href="#!/Users"><ion-icon name="ios-contacts"></ion-icon>   Usuarios</a></li>
+        }*@
 
             <li class="nav-item"><a class="nav-link" href="#!/Count"><ion-icon name="logo-buffer"></ion-icon>Counting</a></li>
             <li class="nav-item"><a class="nav-link" href="#!/Conciliation"><ion-icon name="logo-buffer"></ion-icon>Conciliation</a></li>
-            <li class="nav-item"><a class="nav-link" href="#!/Admin"><ion-icon name="logo-buffer"></ion-icon>Admin</a></li>
+            @*<li class="nav-item"><a class="nav-link" href="#!/AdminUsers"><ion-icon name="logo-buffer"></ion-icon>Admin</a></li>*@
+
+            <li class="nav-item dropdown">
+
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown">Admin</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#!/AdminUsers" >Users</a>
+                    <a class="dropdown-item" href="#!AdminAreas" >Areas</a>
+                </div>
+            </li>
 
         </ul>
     </div>

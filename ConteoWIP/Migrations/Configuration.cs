@@ -5,14 +5,14 @@ namespace ConteoWIP.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<ConteoWIP.Areas.ConteoWIP.Models.ConteoWIPEntities>
+    internal sealed class Configuration : DbMigrationsConfiguration<ConteoWIP.Areas.Usuarios.Models.UsuariosEntities>
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
+            AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(ConteoWIP.Areas.ConteoWIP.Models.ConteoWIPEntities context)
+        protected override void Seed(ConteoWIP.Areas.Usuarios.Models.UsuariosEntities context)
         {
             //  This method will be called after migrating to the latest version.
 

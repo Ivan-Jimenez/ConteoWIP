@@ -38,6 +38,12 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutReCountStatus(string id, ReCountStatus reCountStatus)
         {
+            if (id.Split('_')[0] == "SAL")
+            {
+                id = "SAL #" + id.Split('_')[1];
+
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

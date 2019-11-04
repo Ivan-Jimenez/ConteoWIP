@@ -1,6 +1,6 @@
-﻿<div ng-controller="conciliation-controller">
+﻿<div ng-controller="conciliation-WIP-controller">
     <div class="index animated fadeInDown slow">
-        <h3>Conciliation</h3>
+        <h3>Conciliation WIP</h3>
         <hr />
 
     <div class="row">
@@ -83,12 +83,18 @@
                             <th class="info-table">{{product.ConciliationUser}}</th>
                             <th class="info-table">{{product.StdCost}}</th>
                             <th class="info-table">{{product.TotalCost}}</th>
-                            <th class="info-table"><button class="btn btn-naranja"><ion-icon name="construct" data-toggle="modal" data-target="#conciliationModal" ng-click="select(product.OrderNumber)"></ion-icon></button></th>
+                            <th class="info-table"><button class="btn btn-naranja" data-toggle="modal" data-target="#conciliationModal" ng-click="select(product.OrderNumber)"><ion-icon name="construct" ></ion-icon></button></th>
                         </tr>
                     </tbody>
                 </table>
             </div>
             @* Ends Conciliation Table *@
+        </div>
+        <div class="row">
+            <div class="col-lg-11"></div>
+            <div class="col-lg-1">
+                <button class="btn btn-azul" ng-click="downloadAllDiscrepancies()">Download Discrepancies</button>
+            </div>
         </div>
     </div>
 

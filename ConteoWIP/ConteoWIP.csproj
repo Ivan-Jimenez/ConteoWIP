@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.7\build\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.7\build\Microsoft.CodeAnalysis.Analyzers.props')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -92,6 +93,7 @@
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.6.0\lib\net45\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
+    <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -187,6 +189,23 @@
     <Compile Include="Areas\ConteoWIP\Models\Count.cs" />
     <Compile Include="Areas\ConteoWIP\Models\FirstCountStatus.cs" />
     <Compile Include="Areas\ConteoWIP\Models\ReCountStatus.cs" />
+    <Compile Include="Areas\Usuarios\Controllers\Filtros\FiltrosUsuariosController.cs" />
+    <Compile Include="Areas\Usuarios\Controllers\Usuarios\DivisionesController.cs" />
+    <Compile Include="Areas\Usuarios\Controllers\Usuarios\RolesController.cs" />
+    <Compile Include="Areas\Usuarios\Controllers\Usuarios\SistemaPantallasController.cs" />
+    <Compile Include="Areas\Usuarios\Controllers\Usuarios\SistemasController.cs" />
+    <Compile Include="Areas\Usuarios\Controllers\Usuarios\UsuarioDivisionesController.cs" />
+    <Compile Include="Areas\Usuarios\Controllers\Usuarios\UsuarioRolesController.cs" />
+    <Compile Include="Areas\Usuarios\Controllers\Usuarios\UsuariosController.cs" />
+    <Compile Include="Areas\Usuarios\Models\Divisiones.cs" />
+    <Compile Include="Areas\Usuarios\Models\Roles.cs" />
+    <Compile Include="Areas\Usuarios\Models\SistemaPantallas.cs" />
+    <Compile Include="Areas\Usuarios\Models\Sistemas.cs" />
+    <Compile Include="Areas\Usuarios\Models\UsuarioDivisiones.cs" />
+    <Compile Include="Areas\Usuarios\Models\UsuarioRoles.cs" />
+    <Compile Include="Areas\Usuarios\Models\Usuarios.cs" />
+    <Compile Include="Areas\Usuarios\Models\UsuariosEntities.cs" />
+    <Compile Include="Areas\Usuarios\UsuariosAreaRegistration.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -195,8 +214,13 @@
     <Compile Include="Migrations\201910312257196_First.Designer.cs">
       <DependentUpon>201910312257196_First.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201911030529029_Initial.cs" />
+    <Compile Include="Migrations\201911030529029_Initial.Designer.cs">
+      <DependentUpon>201911030529029_Initial.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Provider\CustomProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\animate.css" />
@@ -1040,6 +1064,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Files\uploaded_data.xlsx" />
     <Content Include="Files\data_wip_and_bins.xlsx" />
+    <Content Include="Areas\Usuarios\Views\web.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2-vsdoc.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -1123,13 +1148,15 @@
     <Content Include="Views\Home\Count.cshtml" />
     <Content Include="Views\Home\Dashboard.cshtml" />
     <Content Include="Views\Home\Conciliation.cshtml" />
-    <Content Include="Views\Home\Admin.cshtml" />
+    <Content Include="Views\Home\AdminUsers.cshtml" />
+    <Content Include="Views\Home\AdminAreas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\ConteoWIP\Views\Counts\" />
     <Folder Include="Areas\ConteoWIP\Views\Count\" />
     <Folder Include="Areas\ConteoWIP\Views\Shared\" />
+    <Folder Include="Areas\Usuarios\Views\Shared\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
@@ -1165,6 +1192,13 @@
     <EmbeddedResource Include="Migrations\201910312257196_First.resx">
       <DependentUpon>201910312257196_First.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911030529029_Initial.resx">
+      <DependentUpon>201911030529029_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -1205,6 +1239,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.11.0\build\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.11.0\build\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.ApplicationInsights.WindowsServer.2.11.1\build\Microsoft.ApplicationInsights.WindowsServer.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ApplicationInsights.WindowsServer.2.11.1\build\Microsoft.ApplicationInsights.WindowsServer.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.ApplicationInsights.Web.2.11.1\build\Microsoft.ApplicationInsights.Web.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ApplicationInsights.Web.2.11.1\build\Microsoft.ApplicationInsights.Web.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.7\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.7\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
   </Target>
   <Import Project="..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.11.1\build\Microsoft.ApplicationInsights.DependencyCollector.targets" Condition="Exists('..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.11.1\build\Microsoft.ApplicationInsights.DependencyCollector.targets')" />
   <Import Project="..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.11.1\build\Microsoft.ApplicationInsights.PerfCounterCollector.targets" Condition="Exists('..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.11.1\build\Microsoft.ApplicationInsights.PerfCounterCollector.targets')" />

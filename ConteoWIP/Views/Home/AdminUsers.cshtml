@@ -1,0 +1,105 @@
+﻿<div ng-controller="adminUsers-controller">
+    @* Starts Users Section *@
+    <div class="index animated fadeInDown slow">
+        <h3>Users</h3>
+        <hr class="hr" />
+        <div class="form-card text-center">
+            <div class="row" ng-show="nuevo">
+                @* TABLA *@
+
+                <div class="col-lg-7">
+                    <h4 style="padding-bottom: 20px; font-size: 22px;">Users</h4>
+                    <div class="table-responsive overflow-auto" style="height: 400px;">
+                        <table class="table table-sm table-striped table-hover">
+                            <thead>
+                                <tr class="fondo-azul">
+                                    <th class="info-header">Username</th>
+                                    <th class="info-header">E-mail</th>
+                                    <th class="info-header">Rol</th>
+                                    @*<th>Divisiones</th>*@
+                                    <th class="info-header"></th>
+                                    <th class="info-header"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in usuarios| filter: filter">
+                                    <td class="info-table">{{ item.Usuario}}</td>
+                                    <td class="info-table">{{ item.Correo }}</td>
+                                    <td class="info-table">{{ item.Rol }}</td>
+                                    @*<td class="info">
+                                    <div class="row" ng-repeat="itemDivisiones in usuariosdivisiones| filter: {Usuario:item.Usuario} ">
+                                        {{itemDivisiones.Descripcion}}
+                                    </div>
+                                </td>*@
+                                    <td>
+                                        <button class="btn btn-rojo" ng-click="delete(item.Id)" data-toggle="tooltip" data-placement="top" title="Eliminar">
+                                            <ion-icon name="trash"></ion-icon>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-amarillo" ng-click="Editar(item.Id)" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <ion-icon name="create"></ion-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                @* INPUTS *@
+
+                <div class="col-lg-5">
+                    <div class="jumbotron">
+                        @* INFO DEL USUARIO *@
+                        <h4 style="padding-bottom: 20px; font-size: 22px;">Add/Edit User</h4>
+                        <form name="mainForMasterUsuario">
+                            <div class="row">
+                                <div class="col-lg-7 form-group">
+                                    <div class="col-lg-8">
+                                        <label>Windows User</label>
+                                        <input class="form-control width-box" name="usuario" type="text" ng-model="usuario" ng-blur="BuscarUsuario()" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 form-group">
+                                    <label>E-mail</label>
+                                    <input class="form-control width-box" type="text" disabled ng-model="correo" required />
+                                </div>
+
+                                @* ROLES *@
+                                <div class="col-lg-6">
+                                    <label>*Rol</label>
+                                    <div class="custom-control" ng-repeat="item in rolesporsistema">
+                                        <input type="radio" ng-model="$parent.rolusuario" ng-value="item" required>{{item.Descripcion}}
+                                        <p ng-show="mainForMasterUsuario.$parent.rolusuario.$invalid && !mainForMasterUsuario.$parent.rolusuario.$pristine" class="text-danger">Campo Obligatorio.</p>
+                                    </div>
+
+                                </div>
+                                @*<div class="col-lg-6" ng-show="rolusuario.Id!==1">
+                                <label>Divisiones</label>
+                                <div class="custom-control" ng-repeat="itemDivision in divisiones">
+                                    <input ng-if="(empleadoDivisiones|filter: {Id_Division:itemDivision.Id}).length>0" ng-checked="true" type="checkbox" id="chk-{{itemDivision.Id}}" name="chk-{{itemDivision.Id}}" onchange="addordeletedivision(this)" />
+                                    <input ng-if="(empleadoDivisiones|filter: {Id_Division:itemDivision.Id}).length==0" type="checkbox" id="chk-{{itemDivision.Id}}" name="chk-{{itemDivision.Id}}" onchange="addordeletedivision(this)" /> {{itemDivision.Descripcion}}
+                                </div>
+                            </div>*@
+                                @* DIVISIONES *@
+
+                                <div class="col-lg-12">
+                                    <div style="text-align: center;">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-naranja" ng-click="LimpiarUsuario()"><ion-icon name="md-return-left"></ion-icon> Clean</button>
+                                            <button type="button" class="btn btn-azul" ng-click="addorupdateUser()" ng-disabled="mainForMasterUsuario.$invalid"><ion-icon name="md-checkmark"></ion-icon> Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* Ends User Section *@
+
+</div>
+

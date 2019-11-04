@@ -42,8 +42,11 @@ app.config(function ($routeProvider) {
         .when('/Conciliation', {
             templateUrl: 'Conciliation'
         })
-        .when('/Admin', {
-            templateUrl: 'Admin'
+        .when('/AdminUsers', {
+            templateUrl: 'AdminUsers'
+        })
+        .when('/AdminAreas', {
+            templateUrl: 'AdminAreas'
         })
         .otherwise({
             templateUrl: 'Count'
@@ -52,9 +55,9 @@ app.config(function ($routeProvider) {
 
 
 /**********************************************************************************************
- ******************************** Count Controller ********************************************
+ ******************************** Count WIP Controller ****************************************
  **********************************************************************************************/
-app.controller("count-controller", ($scope, $http) => {
+app.controller("count-WIP-controller", ($scope, $http) => {
 
     var countingArea = "";
     var countingType = "";
@@ -99,7 +102,12 @@ app.controller("count-controller", ($scope, $http) => {
     }
 
     $scope.count = (order, counted, countType, area) => {
-        
+
+        var newArea = area;
+        if (area.split('#')[0] === "SAL ") {
+            newArea = "SAL_" + area.split('#')[1];
+        }
+
         cleanAddForm();
         $http.get(`${uriApi}/api/Counts/?order=${order}`).then((res) => {
             console.log("count Result Exist => ", res);
@@ -108,8 +116,8 @@ app.controller("count-controller", ($scope, $http) => {
                 $scope.orderNumber = "";
                 $scope.counted = "";
                 if (res.data[0].AreaLine === area) {
-                    saveCount(order, counted, countType, area);
-                    $http.get(`${uriApi}/api/Counts/?area=${area}&count_type=${countType}`, {
+                    saveCount(order, counted, countType, newArea);
+                    $http.get(`${uriApi}/api/Counts/?area=${newArea}&count_type=${countType}`, {
                         OrderNumber: $scope.order_number,
                         Product: $scope.product,
                     }).then((response) => {
@@ -255,6 +263,12 @@ app.controller("count-controller", ($scope, $http) => {
     }
 
     $scope.closeArea = (area, countType) => {
+
+        var newArea = area;
+        if (area.split('#')[0] === "SAL ") {
+            newArea = "SAL_" + area.split('#')[1];
+        }
+
         Swal.fire({
             title: 'Close Area',
             text: "Do you to close "+area+"?",
@@ -266,7 +280,7 @@ app.controller("count-controller", ($scope, $http) => {
         }).then((result) => {
             if (result.value) {
                 if (countType === "Count") {
-                    $http.put(`${uriApi}/api/FirstCountStatus/?id=${area}&`, { AreaLine: area, Finish: true }).then((res) => {
+                    $http.put(`${uriApi}/api/FirstCountStatus/?id=${newArea}&`, { AreaLine: area, Finish: true }).then((res) => {
                         console.log("closeArea Result => " + res.data);
                         $scope.showSelectCountForm = true;
                         $scope.showFinishOptions = false;
@@ -274,7 +288,7 @@ app.controller("count-controller", ($scope, $http) => {
                         console.log("closeArea Error => ", error);
                     });
                 } else {
-                    $http.put(`${uriApi}/api/ReCountStatus/?id=${area}&`, { AreaLine: area, Finish: true }).then((res) => {
+                    $http.put(`${uriApi}/api/ReCountStatus/?id=${newArea}&`, { AreaLine: area, Finish: true }).then((res) => {
                         console.log("closeArea Result => " + res.data);
                     }).catch((error) => {
                         console.log("closeArea Error => ", error);
@@ -384,11 +398,11 @@ app.controller("count-controller", ($scope, $http) => {
     }
 });
 
-/**********************************************************************************************
- ******************************** Conciliation Controller *************************************
- **********************************************************************************************/
 
-app.controller("conciliation-controller", ($scope, $http) => {
+/**********************************************************************************************
+ **************************** Conciliation WIP Controller *************************************
+ **********************************************************************************************/
+app.controller("conciliation-WIP-controller", ($scope, $http) => {
 
     //showAll();
 
@@ -403,11 +417,19 @@ app.controller("conciliation-controller", ($scope, $http) => {
     }
 
     $scope.showDiscrepancies = () => {
-        $http.get(`${uriApi}/api/Discrepancies/?area=${$scope.area_line}&count_type=ReCount`).then((res) => {
-            $scope.products = res.data;
-        }).catch((error) => {
-            snackbar(error.data);
-        });
+        if ($scope.area_line === undefined || $scope.areaLine === '') {
+            $http.get(`${uriApi}/api/Discrepancies/`).then((res) => {
+                $scope.products = res.data;
+            }).catch((error) => {
+                snackbar(error.data);
+            });
+        } else {
+            $http.get(`${uriApi}/api/Discrepancies/?area=${$scope.area_line}&count_type=ReCount`).then((res) => {
+                $scope.products = res.data;
+            }).catch((error) => {
+                snackbar(error.data);
+            });
+        }
     }
 
     $scope.select = (order) => {
@@ -420,6 +442,10 @@ app.controller("conciliation-controller", ($scope, $http) => {
         }).catch((error) => {
             snackbar(error.data);
         });
+    }
+
+    $scope.downloadAllDiscrepancies = () => {
+        window.open(`${uriApi}/api/Data/?area=ThisShitIsFuck&count_type=All`);
     }
 
     /*************************************************************************************
@@ -435,9 +461,314 @@ app.controller("conciliation-controller", ($scope, $http) => {
     }
 });
 
-/**********************************************************************************************
- ********************************* Admin Controller *******************************************
- **********************************************************************************************/
-app.controller("admin-controller", ($scope, $http) => {
 
+/*********************************************************************************************
+ ******************************* Admin Areas Controller **************************************
+ *****************************************************+++++++++++++++*************************/
+app.controller("adminAreas-Controller", ($scope, $http) => {
+    $http.get(`${uriApi}/api/FirstCountStatus/`).then((res) => {
+        console.log(res.data);
+        $scope.wipFirst = res.data;
+    }).catch((error) => {
+        snackbar(error.data);
+    });
+
+    $http.get(`${uriApi}/api/ReCountStatus/`).then((res) => {
+        console.log(res.data);
+        $scope.wipRecount = res.data;
+    }).catch((error) => {
+        snackbar(error.data);
+    });
+
+    $scope.openWipFirst = (area) => {
+        var newArea = area;
+        if (area.split('#')[0] === 'SAL ') {
+            newArea = 'SAL_' + area.split('#')[1];
+        }
+
+        $http.put(`${uriApi}/api/FirstCountStatus/${newArea}`, { AreaLine: area, Finish: false }).then((res) => {
+            snackbar(res.data);
+        }).catch((error) => {
+            snackbar(error.data);
+        });
+    }
+
+    $scope.openWipRecount = (area) => {
+        var newArea = area;
+        if (area.split('#')[0] === 'SAL ') {
+            newArea = 'SAL_' + area.split('#')[1];
+        }
+
+        $http.put(`${uriApi}/api/ReCountStatus/${newArea}`, { AreaLine: area, Finish: false }).then((res) => {
+            snackbar(res.data);
+        }).catch((error) => {
+            snackbar(error.data);
+        });
+    }
 });
+
+/**********************************************************************************************
+ ********************************* Admin Users Controller *************************************
+ **********************************************************************************************/
+var id_sistema = 1;
+app.controller("adminUsers-controller", ($scope, $http) => {
+    $scope.accion = "Crear Usuario";
+    $scope.nuevo = true;
+    $scope.id_usuario = 0;
+    $scope.usuario = "";
+
+    $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=3&id1=${id_sistema}`).then((response) => {
+
+        $scope.usuarios = response.data;
+    });
+
+    $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=6&id1=${id_sistema}`).then((response) => {
+
+        $scope.usuariosdivisiones = response.data;
+    });
+
+    $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=1&id1=${id_sistema}`).then(function (response) {
+        $scope.rolesporsistema = response.data;
+        var index = $scope.rolesporsistema.find(x => x.Descripcion == "Operativo Sistemas");
+        $scope.rolusuario = index;
+    });
+
+    $http.get(`${uriApi}/api/Divisiones`).then(function (response) {
+        $scope.divisiones = response.data;
+    });
+
+    $scope.empleadoDivisiones = [];
+    $scope.Editar = function (id_usuario) {
+        $scope.accion = "Editar Usuario";
+        $scope.LimpiarUsuario();
+        $http.get(`${uriApi}/api/Usuarios/${id_usuario}`).then(function (response) {
+            $scope.id_usuario = response.data.Id;
+            $scope.usuario = response.data.Usuario;
+            $scope.correo = response.data.Email;
+
+            $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=2&id1=${id_sistema}&id2=${id_usuario}`).then(function (response) {
+                var Id_rol = "";
+                if (response.data.length > 0) {
+                    Id_rol = "" + response.data[0].Id_Rol;
+                }
+                //$scope.myVar = Id_rol;
+                var index = $scope.rolesporsistema.find(x => x.Id == Id_rol);
+                $scope.rolusuario = index;
+
+                $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=5&id1=${id_sistema}&strValor=${$scope.usuario}`).then(function (response) {
+                    usuarioDivisiones = response.data;
+                    $scope.empleadoDivisiones = response.data;
+                });
+
+            });
+        });
+    }
+
+    $scope.chageValue = function (Id_rol) {
+        $scope.myVar = Id_rol;
+    };
+
+    $scope.BuscarUsuario = function () {
+
+        var usuario = $scope.usuario;
+        $scope.LimpiarUsuario();
+        $scope.usuario = usuario;
+        $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=4&strValor=${$scope.usuario}`).then(function (response) {
+            var Id_rol = "";
+            if (response.data.length === 0) {
+                $http.get(`${uriApi}/api/FiltrosUsuarios/getInfo?strValor=${$scope.usuario}`).then(function (response) {
+                    if (response.data.usuario === "") {
+                        snackbar("Usuario no encontrado");
+                        $scope.usuario = "";
+                        $scope.correo = "";
+                    } else {
+                        $scope.usuario = response.data.usuario;
+                        $scope.correo = response.data.correo;
+                    }
+                }).catch(function (response) {
+                    snackbar(strMensajeError);
+                });
+            }
+            else {
+                $scope.id_usuario = response.data[0].Id;
+                $scope.usuario = response.data[0].Usuario;
+                $scope.correo = response.data[0].Email;
+            }
+        });
+
+
+    }
+
+    $scope.LimpiarUsuario = function () {
+        $scope.id_usuario = 0;
+        $scope.usuario = "";
+        $scope.correo = "";
+        $scope.myVar = "";
+        $scope.empleadoDivisiones = [];
+        $scope.rolusuario = [];
+        usuarioDivisiones = [];
+        $http.get(`${uriApi}/api/Divisiones`).then(function (response) {
+            $scope.divisiones = response.data;
+        });
+        $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=1&id1=${id_sistema}`).then(function (response) {
+            $scope.rolesporsistema = response.data;
+            var index = $scope.rolesporsistema.find(x => x.Descripcion == "Operativo Sistemas");
+            $scope.rolusuario = index;
+        });
+    }
+
+    $scope.delete = function (id_usuario) {
+
+        $http.get(`${uriApi}/api/Usuarios/${id_usuario}`).then(function (response) {
+            var usuario = response.data.Usuario;
+            var id_usuario = response.data.Id;
+            Swal.fire({
+                title: `Deseas dar de baja el usuario ${response.data.Usuario}?`,
+                //text: "Baja Usuario",
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar'
+            }).then((result) => {
+                if (result.value) {
+                    $http.delete(`${uriApi}/api/FiltrosUsuarios/delete?tipo=1&id1=${id_sistema}&strValor=${usuario}`).then(function (response) {
+                        $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=2&id1=${id_sistema}&id2=${id_usuario}`).then(function (response) {
+                            var id_usuario_rol = response.data[0].Id;
+                            $http.delete(`${uriApi}/api/UsuarioRoles/${id_usuario_rol}`).then(function (data) {
+                                $scope.LimpiarUsuario();
+                                Swal.fire(
+                                    'Eliminado',
+                                    `Usuario Eliminado`,
+                                    'success'
+                                )
+                                $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=3&id1=${id_sistema}`).then((response) => {
+                                    $scope.usuarios = response.data;
+                                });
+                                $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=6&id1=${id_sistema}`).then((response) => {
+                                    $scope.usuariosdivisiones = response.data;
+                                });
+                            }).error(function (data) {
+                                snackbar(strMensajeError);
+                            });
+                        });
+                    });
+                }
+            })
+        });
+    }
+
+    $scope.addorupdateUser = function () {
+        if ($scope.mainForMasterUsuario.$valid) {
+            var Usuario = {
+                Id: $scope.id_usuario,
+                Usuario: $scope.usuario,
+                Email: $scope.correo
+            };
+
+            //Guardar y/o actualizar usuario
+            $http.post(`${uriApi}/api/Usuarios`, Usuario).then(function (response) {
+                $scope.id_usuario = response.data.Id;
+                $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=2&id1=${id_sistema}&id2=${$scope.id_usuario}`).then(function (response) {
+                    var Id = 0;
+                    if (response.data.length > 0) {
+                        Id = response.data[0].Id;
+                    }
+                    var usuariorol = {
+                        Id: Id,
+                        Id_Usuario: $scope.id_usuario,
+                        Id_rol: $scope.rolusuario.Id,
+                    };
+                    $http.post(`${uriApi}/api/UsuarioRoles`, usuariorol).then(function (data) {
+                        $scope.guardardivisiones(0);
+                    }).error(function (data) {
+                        snackbar(strMensajeError);
+                    });
+                });
+                debugger;
+                $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=3&id1=${id_sistema}`).then((response) => {
+                    $scope.usuarios = response.data;
+                });
+                $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=6&id1=${id_sistema}`).then((response) => {
+                    $scope.usuariosdivisiones = response.data;
+                });
+            }).error(function (data) {
+                snackbar(strMensajeError);
+            });
+        }
+    }
+
+    $scope.guardardivisiones = function (index) {
+        if (index < usuarioDivisiones.length) {
+            if (usuarioDivisiones[index].Valor) {
+                var usuariorol = {
+                    Id: usuarioDivisiones[index].Id,
+                    Id_Usuario: $scope.id_usuario,
+                    Id_Division: usuarioDivisiones[index].Id_Division,
+                    Id_Sistema: id_sistema,
+                };
+
+                $http.post(`${uriApi}/api/UsuarioDivisiones`, usuariorol).then(function (data) {
+                    index++;
+
+                    $scope.guardardivisiones(index);
+
+                }).error(function (data) {
+                    snackbar(strMensajeError);
+                });
+
+
+            }
+            else {
+
+
+                $http.delete(`${uriApi}/api/UsuarioDivisiones/${usuarioDivisiones[index].Id}`, usuariorol).then(function (data) {
+                    index++;
+
+                    $scope.guardardivisiones(index);
+
+                }).error(function (data) {
+                    snackbar(strMensajeError);
+                });
+
+            }
+
+        }
+        else {
+            $scope.LimpiarUsuario();
+            snackbar(strMensaje);
+            $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=3&id1=${id_sistema}`).then((response) => {
+                $scope.usuarios = response.data;
+            });
+
+            debugger;
+            $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=3&id1=${id_sistema}`).then((response) => {
+                $scope.usuarios = response.data;
+            });
+
+            $http.get(`${uriApi}/api/FiltrosUsuarios/getValor?tipo=6&id1=${id_sistema}`).then((response) => {
+                $scope.usuariosdivisiones = response.data;
+            });
+        }
+    }
+});
+
+var usuarioDivisiones = [];
+function addordeletedivision(checkbox) {
+    var blnValue = checkbox.checked;
+    var Id_Division = checkbox.id.replace("chk-", "");
+    var index = usuarioDivisiones.find(x => x.Id_Division == Id_Division);
+    if (index === undefined) {
+
+        usuarioDivisiones.push({ Id: 0, Id_Division: Id_Division, Valor: true, Existe: 0 });
+    }
+    else {
+
+        if (index.Existe === 0) {
+            var index = usuarioDivisiones.findIndex(x => x.Id_Division == Id_Division);
+            usuarioDivisiones.splice(index, 1);
+        }
+        else {
+            index.Valor = blnValue;
+        }
+    }
+}

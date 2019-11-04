@@ -13,6 +13,7 @@ namespace ConteoWIP.Controllers
         public ActionResult Dashboard() => View();
         public PartialViewResult Count() => PartialView();
         public PartialViewResult Conciliation() => PartialView();
-        public PartialViewResult Admin() => PartialView();
+        public PartialViewResult AdminUsers() => PartialView();
+        public PartialViewResult AdminAreas() => PartialView();
     }
 }

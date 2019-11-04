@@ -1,0 +1,88 @@
+﻿
+<div ng-controller="adminAreas-Controller">
+    <div class="index animated fadeInDown slow">
+        <h3>Areas</h3>
+        <hr />
+        <center>
+            <div class="row">
+                @* Starts WIP Areas *@
+                <div class="jumbotron col-lg-6" style="padding-left:30px">
+                    <h4>WIP Areas</h4>
+                    <hr />
+                    <h5>First Count</h5>
+                    <div class="table-responsive overflow-auto" style="height:300px">
+                        <table class="table table-sm table-striped table-hover">
+                            <thead>
+                                <tr class="fondo-azul">
+                                    <th class="info-header">Area/Line</th>
+                                    <th class="info-header">Close</th>
+                                    <th class="info-header"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="areaWipFirst in wipFirst">
+                                    <th class="info-table"><ion-icon name="logo-buffer" />{{areaWipFirst.AreaLine}}</th>
+                                    <th class="info-table" ng-class="{'bg-success':areaWipFirst.Finish}">{{areaWipFirst.Finish}}</th>
+                                    <th class="info-table">
+                                        <button class="btn btn-naranja" ng-click="openWipFirst(areaWipFirst.AreaLine)" data-toggle="tooltip" data-placement="top" title="Open" ng-show="areaWipFirst.Finish">
+                                            Open <ion-icon name="create"></ion-icon>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <h5>Re-Count</h5>
+                    <div class="table-responsive overflow-auto" style="height:300px">
+                        <table class="table table-sm table-striped table-hover">
+                            <thead>
+                                <tr class="fondo-azul">
+                                    <th class="info-header">Area/Line</th>
+                                    <th class="info-header">Close</th>
+                                    <th class="info-header"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="areaWipRecount in wipRecount">
+                                    <th class="info-table"><ion-icon name="logo-buffer" />{{areaWipRecount.AreaLine}}</th>
+                                    <th class="info-table" ng-class="{'bg-success':areaWipRecount.Finish}">{{areaWipRecount.Finish}}</th>
+                                    <th class="info-table">
+                                        <button class="btn btn-naranja" ng-click="openWipRecount(areaWipRecount.AreaLine)" data-toggle="tooltip" data-placement="top" title="Open" ng-show="areaWipRecount.Finish">
+                                            Open <ion-icon name="create"></ion-icon>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                @* Ends WIP Areas *@
+                @* Starts BINS Areas *@
+                <div class="jumbotron col-lg-6">
+                    <h5>BINS Areas</h5>
+                    <div class="table-responsive overflow-auto" style="height:300px">
+                        <table class="table table-sm table-striped table-hover">
+                            <thead>
+                                <tr class="fondo-azul">
+                                    <th class="info-header">Area/Line</th>
+                                    <th class="info-header">Status</th>
+                                    <th class="info-header"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="">
+                                    <th class="info-table"><ion-icon name="logo-buffer">{{}}</ion-icon></th>
+                                    <th class="info-table"></th>
+                                    <th class="info-table"></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                @* Ends BINS Areas *@
+            </div>
+        </center>
+
+    </div>
+</div>
+
