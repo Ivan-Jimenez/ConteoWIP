@@ -11,8 +11,9 @@ namespace ConteoWIP.Controllers
     {
         public ActionResult Index() => RedirectToAction("Dashboard");
         public ActionResult Dashboard() => View();
-        public PartialViewResult Count() => PartialView();
-        public PartialViewResult Conciliation() => PartialView();
+        public PartialViewResult CountWIP() => PartialView();
+        public PartialViewResult CountBINS() => PartialView();
+        public PartialViewResult ConciliationWIP() => PartialView();
         public PartialViewResult AdminUsers() => PartialView();
         public PartialViewResult AdminAreas() => PartialView();
     }

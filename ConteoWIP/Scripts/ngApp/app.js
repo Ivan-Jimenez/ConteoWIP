@@ -36,11 +36,14 @@ var errorMessage = 'Ocurrio un error! El servidor dejo de responder, intente de 
 
 app.config(function ($routeProvider) {
     $routeProvider
-        .when('/Count', {
-            templateUrl: 'Count'
+        .when('/CountWIP', {
+            templateUrl: 'CountWIP'
         })
-        .when('/Conciliation', {
-            templateUrl: 'Conciliation'
+        .when('/CountBINS', {
+            templateUrl: 'CountBINS'
+        })
+        .when('/ConciliationWIP', {
+            templateUrl: 'ConciliationWIP'
         })
         .when('/AdminUsers', {
             templateUrl: 'AdminUsers'
@@ -49,7 +52,7 @@ app.config(function ($routeProvider) {
             templateUrl: 'AdminAreas'
         })
         .otherwise({
-            templateUrl: 'Count'
+            templateUrl: 'CountWIP'
         });
 });
 
@@ -396,6 +399,92 @@ app.controller("count-WIP-controller", ($scope, $http) => {
         $scope.disableOrd_qty = disable;
         $scope.disableCountedForm = disable;
     }
+});
+
+
+/**********************************************************************************************
+ ******************************* Count BINS Controller ****************************************
+ **********************************************************************************************/
+app.controller("count-BINS-controller", ($scope, $http) => {
+    var countingType = "";
+    var countingArea = "";
+
+    $("#addModal").modal({ show: false });
+
+    $scope.showCountForm = false;
+    $scope.showSelectCountForm = true;
+
+
+    $scope.isAreaClosed = (area, countType) => {
+        if (countType === "Count") {
+            $http.get(`${uriApi}/api/FirstCountStatusBINS/?id=${area}`).then((res) => {
+                console.log("isAreaClosed Result => " + res.data.Finish);
+                if (!res.data.Finish) {
+                    startCounting(area, countType)
+                } else {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'The ' + area + " area is closed!",
+                    });
+                }
+            }).catch((error) => {
+                console.log("isAreaClosed Error => " + error);
+                if (error.status === 404) {
+                    startCounting(area, countType);
+                }
+            });
+        } else {
+            $http.get(`${uriApi}/api/ReCountStatusBins/?id=${area}`).then((res) => {
+                console.log("isAreaClosed Result => " + res);
+                if (!res.data.Finish) {
+                    startCounting(area, countType)
+                } else {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'The ' + area + " area is closed!",
+                    });
+                }
+            }).catch((error) => {
+                console.log("isAreaClosed Error => " + error);
+                if (error.status === 404) {
+                    startCounting(area, countType);
+                }
+            });
+        }
+    }
+
+    /********************************************************************************
+     **************************** Util Fuctions *************************************
+     ********************************************************************************/
+    function startCounting(area, countType) {
+        //contingArea = area;
+        //countingType = countType;
+
+        var newArea = area;
+        //if (area.split('#')[0] === "SAL ") {
+        //    newArea = "SAL_" + area.split('#')[1];
+        //}
+        $http.get(`${uriApi}/api/CountBINS/?area=${newArea}&count_type=${countType}`, {
+            OrderNumber: $scope.order_number,
+            Product: $scope.product,
+        }).then((response) => {
+            $scope.products = response.data;
+        }).catch(error => {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: error.data,
+            });
+            console.log(error.data);
+        });
+
+        $scope.showCountForm = true;
+        $scope.showSelectCountForm = false;
+        console.log($scope.countType + ", " + $scope.areaLine);
+    }
+    
 });
 
 

@@ -16,19 +16,36 @@
             <li class="nav-item"><a class="nav-link" href="#!/Users"><ion-icon name="ios-contacts"></ion-icon>   Usuarios</a></li>
         }*@
 
-            <li class="nav-item"><a class="nav-link" href="#!/Count"><ion-icon name="logo-buffer"></ion-icon>Counting</a></li>
-            <li class="nav-item"><a class="nav-link" href="#!/Conciliation"><ion-icon name="logo-buffer"></ion-icon>Conciliation</a></li>
-            @*<li class="nav-item"><a class="nav-link" href="#!/AdminUsers"><ion-icon name="logo-buffer"></ion-icon>Admin</a></li>*@
-
+            
+            @* Starts Counting Dropdown *@
             <li class="nav-item dropdown">
-
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown">Admin</a>
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown">Counting</a>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#!/AdminUsers" >Users</a>
-                    <a class="dropdown-item" href="#!AdminAreas" >Areas</a>
+                    <a class="dropdown-item" href="#!/CountWIP">WIP</a>
+                    <a class="dropdown-item" href="#!CountBINS">BINS</a>
                 </div>
             </li>
+            @* Ends Counting Dropdown *@
 
+            @* Starts Conciliation Dropdown *@
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown">Conciliation</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#!/ConciliationWIP">WIP</a>
+                    <a class="dropdown-item" href="#!ConciliationBINS">BINS</a>
+                </div>
+            </li>
+            @* Ends Conciliation Dropdown *@
+
+            @* Starts Admin Dropdown *@
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown">Admin</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#!/AdminUsers">Users</a>
+                    <a class="dropdown-item" href="#!AdminAreas">Areas</a>
+                </div>
+            </li>
+            @* Ends Admin Dropdown *@
         </ul>
     </div>
 </nav>

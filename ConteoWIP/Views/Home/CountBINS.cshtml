@@ -1,0 +1,240 @@
+﻿
+
+<div ng-controller="count-BINS-controller">
+
+    <div class="index animated fadeInDown slow">
+        <h3>BINS Count</h3>
+        <hr />
+
+        <div class="row">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-1 align-content-lg-end">
+                <ion-icon name="search" size="large"></ion-icon>
+            </div>
+            <div class="col-lg-6 align-content-lg-end">
+                <input type="search" class="form-control width-box " placeholder="Search..." ng-model="search" />
+            </div>
+            <div class="col-lg-2">
+                <button class="btn btn-verde" type="button" ng-click="downloadDiscrepancies(areaLine, countType)" ng-show="showDownloadBtn">Download <ion-icon name="cloud-download"></ion-icon></button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3">
+                @* Start selectCountForm *@
+                <center>
+                    <div class="form-card" ng-show="showSelectCountForm">
+                        <h3>Select Count</h3>
+                        <hr />
+                        <form name="selectCountForm">
+
+                            <div class="form-group" ng-class="{ 'has-error' : selectCountForm.countType.$invalid && !selectCountForm.countType.$pristine }">
+                                <label>Count Type</label>
+                                <select class="form-control custom-select" ng-model="countType" name="countType" required>
+                                    <option value="Count" selected>First</option>
+                                    <option value="Re-Count">Re-Count</option>
+                                </select>
+                                <p ng-show="selectCountForm.countType.$invalid && !selectCountForm.countType.$pristine" class="text-danger">Select Count.</p>
+                            </div>
+                            <div class="form-group" ng-class="{ 'has-error' : selectCountForm.areaLine.$invalid && !selectCountForm.areaLine.$pristine }">
+                                <label>Area/Line</label>
+                                <select class="form-control custom-select" ng-model="areaLine" name="areaLine" required>
+                                    <option value="HOLD">HOLD</option>
+                                    <option value="INSPHOLD">INSPHOLD</option>
+                                    <option value="MOVECNC1">MOVECNC1</option>
+                                    <option value="MOVEDEC">MOVEDEC</option>
+                                    <option value="MOVEDO">MOVEDO</option>
+                                    <option value="MOVEFIL1">MOVEFIL1</option>
+                                    <option value="MOVEFIL2">MOVEFIL2</option>
+                                    <option value="MOVEFIL3">MOVEFIL3</option>
+                                    <option value="MOVEPNL1">MOVEPNL1</option>
+                                    <option value="MOVEPNL2">MOVEPNL2</option>
+                                    <option value="MRB-CUU">MRB-CUU</option>
+                                    <option value="MRB-CUU2">MRB-CUU2</option>
+                                    <option value="QA">QA</option>
+                                </select>
+                                <p ng-show="selectCountForm.areaLine.$invalid && !selectCountForm.areaLine.$pristine" class="text-danger">Select Count.</p>
+                            </div>
+                            <center>
+                                <button class="btn btn-azul" type="button" ng-click="isAreaClosed(areaLine, countType)" ng-disabled="selectCountForm.$invalid">
+                                    Start Counting <ion-icon name="md-checkmark">
+                                </button>
+                            </center>
+                        </form>
+                    </div>
+                </center>
+                @* End selectCountForm *@
+
+                @* Start countForm *@
+                <center>
+                    <div class="form-card" ng-show="showCountForm">
+                        <h3>{{countType}}ing {{areaLine}}</h3>
+                        <hr />
+                        <div class="btn-group">
+                            <button class="btn btn-rojo" type="button" ng-click="cancelCounting()">Cancel <ion-icon name="close"></button>
+                            <button class="btn btn-amarillo" type="button" ng-click="finishCounting(areaLine, countType)">Finish <ion-icon name="md-checkmark"></button>
+                        </div>
+                        <form name="countForm">
+                            <div class="form-group" ng-class="{ 'has-error' : countForm.orderNumber.$invalid && !countForm.orderNumber.$pristine }">
+                                <label>Order Number</label>
+                                <input class="form-control" ng-model="orderNumber" name="orderNumber" required>
+                                <p ng-show="countForm.orderNumber.$invalid && !countForm.orderNumber.$pristine" class="text-danger">Order Number can't be empty.</p>
+                            </div>
+                            <div class="form-group" ng-class="{ 'has-error' : countForm.counted.$invalid && !countForm.counted.$pristine }">
+                                <label>Counted</label>
+                                <input class="form-control" ng-model="counted" name="counted" required>
+                                <p ng-show="countForm.counted.$invalid && !countForm.counted.$pristine" class="text-danger">Counted can't be empty.</p>
+                            </div>
+                            <center>
+                                <div class="btn-group">
+                                    <button class="btn btn-azul" type="button" ng-click="count(orderNumber, counted, countType, areaLine)" ng-disabled="countForm.$invalid">Ok <ion-icon name="return-left"></button>
+                                </div>
+                            </center>
+                        </form>
+                    </div>
+                </center>
+                @* End countForm *@
+
+                @* Start Result Options *@
+                <center>
+                    <div class="form-card" ng-show="showFinishOptions">
+                        <h3>{{countType}} finished</h3>
+                        <hr />
+                        <button class="btn btn-rojo" type="button" ng-click="closeArea(areaLine, countType)"> Close Area <ion-icon name="close"></ion-icon></button>
+                        <button class="btn btn-azul" type="button" ng-click="countAgain()"> Count Again <ion-icon name="repeat"></ion-icon></button>
+                        <button class="btn btn-naranja" type="button" ng-click="showDiscrepancies(areaLine, countType)">Discrepancies <ion-icon name="bug"></ion-icon></button>
+                    </div>
+                </center>
+                @* End Result Options *@
+            </div>
+
+            @* Start Table *@
+            <div class="col-lg-9">
+                <div class="table-responsive overflow-auto" style="height: 500px;">
+                    <table class="table table-sm table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th class="info-header"> Product</th>
+                                <th class="info-header">Product Name</th>
+                                <th class="info-header">Area/Line</th>
+                                <th class="info-header">Order Number</th>
+                                <th class="info-header">Ord Qty</th>
+                                <th class="info-header">Counted</th>
+                                <th class="info-header">Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="product in products | filter: search" ng-class="{'bg-warning': product.OrdQty != product.Counted}">
+                                <th class="info-table"><ion-icon name="logo-buffer"></ion-icon> {{product.Product}}</th>
+                                <th class="info-table">{{product.ProductName}}</th>
+                                <th class="info-table">{{product.AreaLine}}</th>
+                                <th class="info-table">{{product.OrderNumber}}</th>
+                                <th class="info-table">{{product.OrdQty}}</th>
+                                <th class="info-table">{{product.Counted}}</th>
+                                <th class="info-table" ng-class="{'text-danger': product.ResultCount != 0}">{{product.ResultCount}}</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @* End Table  *@
+        </div>
+    </div>
+    <div class="text-danger"></div>
+    @* Starts add modal *@
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                @*<div class="modal-header">
+                        <h5 class="modal-title" id="addModalLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>*@
+                <div class="modal-body">
+                    <center>
+                        <div class="form-card">
+                            <form name="addForm" novalidate>
+                                <h3><ion-icon name="md-add"></ion-icon> {{modalTitle}} Positive</h3>
+                                <hr />
+
+                                <div class="row" ng-disabled="true" n-disable="true">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Product</label>
+                                            <input type="text" class="form-control width-box" name="product" ng-model="product" ng-disabled="disableProduct" />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Product Name</label>
+                                            <input type="text" class="form-control width-box" name="productName" ng-model="productName" ng-disabled="disableProductName" />
+                                        </div>
+
+                                        <div class="form-group" ng-class="{ 'has-error' : addForm.area_line.$invalid && !addForm.area_line.$pristine }">
+                                            <label>Area/Line</label>
+                                            <select class="form-control custom-select" ng-model="area_line" name="area_line" ng-disabled="disablearea_line" required>
+                                                <option selected>CNC</option>
+                                                <option value="Composites">Composites</option>
+                                                <option value="Decor">Decor</option>
+                                                <option value="GABRIELA TRIMMER">GABRIELA TRIMMER</option>
+                                                <option value="LUP/Press/CNC">LUP/Press/CNC</option>
+                                                <option value="Metals">Metals</option>
+                                                <option value="Press">Press</option>
+                                                <option value="SAL #1">SAL #1</option>
+                                                <option value="SAL #2">SAL #2</option>
+                                                <option value="SAL #3">SAL #3</option>
+                                                <option value="SAL #5">SAL #5</option>
+                                                <option value="SAL #6">SAL #6</option>
+                                            </select>
+                                            <p ng-show="selectCountForm.areaLine.$invalid && !selectCountForm.areaLine.$pristine" class="text-danger">Select Count.</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Operation Number</label>
+                                            <input type="text" class="form-control width-box" name="operationNumber" ng-model="operationNumber" ng-disabled="disableOperatioNumber" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" ng-class="{ 'has-error' : addForm.order_number.$invalid && !addForm.order_number.$pristine }">
+                                            <label>Order Number</label>
+                                            <input type="text" class="form-control width-box" name="order_number" ng-model="order_number" ng-disabled="disableOrderNumber" required />
+                                            <p ng-show="addForm.order_number.$invalid && !addForm.order_number.$pristine" class="text-danger">Required Field.</p>
+                                        </div>
+
+                                        <div class="form-group" ng-class="{ 'has-error' : addForm.ord_qty.$invalid && !addForm.ord_qty.$pristine }">
+                                            <label>Ord Qty</label>
+                                            <input type="text" class="form-control width-box" name="ord_qty" ng-model="ord_qty" ng-disabled="disableOrd_qty" required />
+                                            <p ng-show="addForm.ord_qty.$invalid && !addForm.ord_qty.$pristine" class="text-danger">Required Field.</p>
+                                        </div>
+
+                                        <div class="form-group" ng-class="{ 'has-error' : addForm.counted_form.$invalid && !addForm.counted_form.$pristine }">
+                                            <label>Counted</label>
+                                            <input type="text" class="form-control width-box" name="counted_form" ng-model="counted_form" ng-disabled="disableCountedForm" required />
+                                            <p ng-show="addForm.counted_form.$invalid && !addForm.counted_form.$pristine" class="text-danger">Required Field.</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Comments</label>
+                                            <textarea type="text" class="form-control width-box" name="comments" ng-model="comments" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-naranja" data-dismiss="modal">Cancel <ion-icon name="ios-return-left"></ion-icon></button>
+                                    <button type="button" class="btn btn-default btn-azul" ng-click="addOrUpdate()" ng-disabled="addForm.$invalid" data-dismiss="modal">Save <ion-icon name="md-checkmark"></ion-icon></button>
+                                </div>
+                            </form>
+                        </div>
+                    </center>
+                </div>
+                @*<div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+    @* Ends add modal *@
+</div>
+
+

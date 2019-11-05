@@ -13,9 +13,9 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 
-namespace ConteoWIP.Areas.ConteoWIP.Controllers
+namespace ConteoWIP.Areas.ConteoWIP.Controllers.BINS
 {
-    public class DataController : ApiController
+    public class DataBinsController : ApiController
     {
         // Upload data from an excel document
         public HttpResponseMessage Post()
@@ -27,7 +27,7 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
 
         public HttpResponseMessage Get()
         {
-            var result = Request.CreateResponse(HttpStatusCode.Created, UploadFile(HttpContext.Current.Server.MapPath("~")+"Files\\data_wip_and_bins.xlsx"));
+            var result = Request.CreateResponse(HttpStatusCode.Created, UploadFile(HttpContext.Current.Server.MapPath("~") + "Files\\data_wip_and_bins.xlsx"));
             return result;
         }
 
@@ -94,11 +94,11 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
                         "Extended Properties='Excel 12.0 Xml; HDR=YES'");
 
                 // Get the new data from the excel file
-                OleDbDataAdapter dataAdapter = new OleDbDataAdapter(@"SELECT * FROM [WIP$] WHERE [OperationNumber] IS NOT NULL;", connXls);
+                OleDbDataAdapter dataAdapter = new OleDbDataAdapter(@"SELECT * FROM [BINS$] WHERE [OrderNumber] IS NOT NULL;", connXls);
                 dataAdapter.Fill(ds);
                 SqlBulkCopy bulkCopy = new SqlBulkCopy(connSql);
-                bulkCopy.DestinationTableName = "Counts";
-                
+                bulkCopy.DestinationTableName = "CountBINS";
+
                 // Map columns 
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Product"].ToString(), "Product");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Alias"].ToString(), "Alias");
@@ -108,15 +108,15 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["OperationDescription"].ToString(), "OperationDescription");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["OrderNumber"].ToString(), "OrderNumber");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["OrdQty"].ToString(), "OrdQty");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Physical"].ToString(), "Physical1");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Result"].ToString(), "Result");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["FinalResult"].ToString(), "FinalResult");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Comments"].ToString(), "Comments");
-                bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["ReCount"].ToString(), "ReCount");
+                //bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Physical"].ToString(), "Physical1");
+                //bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Result"].ToString(), "Result");
+                //bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["FinalResult"].ToString(), "FinalResult");
+                //bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["Comments"].ToString(), "Comments");
+                //bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["ReCount"].ToString(), "ReCount");
                 bulkCopy.ColumnMappings.Add(ds.Tables[0].Columns["StdCost"].ToString(), "StdCost");
 
                 // Delete old data
-                new SqlCommand("DELETE Counts;", connSql).ExecuteNonQuery();
+                new SqlCommand("DELETE CountBINS;", connSql).ExecuteNonQuery();
 
                 bulkCopy.WriteToServer(ds.Tables[0]);
                 return "OK";

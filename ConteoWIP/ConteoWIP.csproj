@@ -179,6 +179,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\ConteoWIP\ConteoWIPAreaRegistration.cs" />
+    <Compile Include="Areas\ConteoWIP\Controllers\BINS\CountBINSController.cs" />
+    <Compile Include="Areas\ConteoWIP\Controllers\BINS\DataBinsController.cs" />
+    <Compile Include="Areas\ConteoWIP\Controllers\BINS\FirstCountStatusBINSController.cs" />
     <Compile Include="Areas\ConteoWIP\Controllers\CountsController.cs" />
     <Compile Include="Areas\ConteoWIP\Controllers\DataController.cs" />
     <Compile Include="Areas\ConteoWIP\Controllers\DiscrepanciesController.cs" />
@@ -187,8 +190,11 @@
     <Compile Include="Areas\ConteoWIP\Controllers\UpdateCountController.cs" />
     <Compile Include="Areas\ConteoWIP\Models\ConteoWIPEntities.cs" />
     <Compile Include="Areas\ConteoWIP\Models\Count.cs" />
+    <Compile Include="Areas\ConteoWIP\Models\CountBINS.cs" />
     <Compile Include="Areas\ConteoWIP\Models\FirstCountStatus.cs" />
+    <Compile Include="Areas\ConteoWIP\Models\FirstCountStatusBINS.cs" />
     <Compile Include="Areas\ConteoWIP\Models\ReCountStatus.cs" />
+    <Compile Include="Areas\ConteoWIP\Models\ReCountStatusBINS.cs" />
     <Compile Include="Areas\Usuarios\Controllers\Filtros\FiltrosUsuariosController.cs" />
     <Compile Include="Areas\Usuarios\Controllers\Usuarios\DivisionesController.cs" />
     <Compile Include="Areas\Usuarios\Controllers\Usuarios\RolesController.cs" />
@@ -210,13 +216,29 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201910312257196_First.cs" />
-    <Compile Include="Migrations\201910312257196_First.Designer.cs">
-      <DependentUpon>201910312257196_First.cs</DependentUpon>
+    <Compile Include="Migrations\201911041751592_Initial.cs" />
+    <Compile Include="Migrations\201911041751592_Initial.Designer.cs">
+      <DependentUpon>201911041751592_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201911030529029_Initial.cs" />
-    <Compile Include="Migrations\201911030529029_Initial.Designer.cs">
-      <DependentUpon>201911030529029_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201911041942233_BINSData.cs" />
+    <Compile Include="Migrations\201911041942233_BINSData.Designer.cs">
+      <DependentUpon>201911041942233_BINSData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911051528348_ChangeOrderToStringBINS.cs" />
+    <Compile Include="Migrations\201911051528348_ChangeOrderToStringBINS.Designer.cs">
+      <DependentUpon>201911051528348_ChangeOrderToStringBINS.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911051535190_ChangeOrderToStringBINS1.cs" />
+    <Compile Include="Migrations\201911051535190_ChangeOrderToStringBINS1.Designer.cs">
+      <DependentUpon>201911051535190_ChangeOrderToStringBINS1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911051541510_Fix.cs" />
+    <Compile Include="Migrations\201911051541510_Fix.Designer.cs">
+      <DependentUpon>201911051541510_Fix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911051545319_Fix1.cs" />
+    <Compile Include="Migrations\201911051545319_Fix1.Designer.cs">
+      <DependentUpon>201911051545319_Fix1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -1142,14 +1164,13 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\Count.cshtml" />
+    <Content Include="Views\Home\CountWIP.cshtml" />
     <Content Include="Views\Home\Dashboard.cshtml" />
-    <Content Include="Views\Home\Conciliation.cshtml" />
+    <Content Include="Views\Home\ConciliationWIP.cshtml" />
     <Content Include="Views\Home\AdminUsers.cshtml" />
     <Content Include="Views\Home\AdminAreas.cshtml" />
+    <Content Include="Views\Home\CountBINS.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1189,16 +1210,28 @@
     <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201910312257196_First.resx">
-      <DependentUpon>201910312257196_First.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201911030529029_Initial.resx">
-      <DependentUpon>201911030529029_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201911041751592_Initial.resx">
+      <DependentUpon>201911041751592_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911041942233_BINSData.resx">
+      <DependentUpon>201911041942233_BINSData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911051528348_ChangeOrderToStringBINS.resx">
+      <DependentUpon>201911051528348_ChangeOrderToStringBINS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911051535190_ChangeOrderToStringBINS1.resx">
+      <DependentUpon>201911051535190_ChangeOrderToStringBINS1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911051541510_Fix.resx">
+      <DependentUpon>201911051541510_Fix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911051545319_Fix1.resx">
+      <DependentUpon>201911051545319_Fix1.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

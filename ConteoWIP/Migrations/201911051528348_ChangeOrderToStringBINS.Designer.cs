@@ -7,13 +7,13 @@ namespace ConteoWIP.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class Initial : IMigrationMetadata
+    public sealed partial class ChangeOrderToStringBINS : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(ChangeOrderToStringBINS));
         
         string IMigrationMetadata.Id
         {
-            get { return "201911030529029_Initial"; }
+            get { return "201911051528348_ChangeOrderToStringBINS"; }
         }
         
         string IMigrationMetadata.Source
