@@ -181,7 +181,9 @@
     <Compile Include="Areas\ConteoWIP\ConteoWIPAreaRegistration.cs" />
     <Compile Include="Areas\ConteoWIP\Controllers\BINS\CountBINSController.cs" />
     <Compile Include="Areas\ConteoWIP\Controllers\BINS\DataBinsController.cs" />
+    <Compile Include="Areas\ConteoWIP\Controllers\BINS\DiscrepanciesBINSController.cs" />
     <Compile Include="Areas\ConteoWIP\Controllers\BINS\FirstCountStatusBINSController.cs" />
+    <Compile Include="Areas\ConteoWIP\Controllers\BINS\ReCountStatusBINSController.cs" />
     <Compile Include="Areas\ConteoWIP\Controllers\CountsController.cs" />
     <Compile Include="Areas\ConteoWIP\Controllers\DataController.cs" />
     <Compile Include="Areas\ConteoWIP\Controllers\DiscrepanciesController.cs" />
@@ -239,6 +241,10 @@
     <Compile Include="Migrations\201911051545319_Fix1.cs" />
     <Compile Include="Migrations\201911051545319_Fix1.Designer.cs">
       <DependentUpon>201911051545319_Fix1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201911052348294_Fuck.cs" />
+    <Compile Include="Migrations\201911052348294_Fuck.Designer.cs">
+      <DependentUpon>201911052348294_Fuck.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -1171,6 +1177,7 @@
     <Content Include="Views\Home\AdminUsers.cshtml" />
     <Content Include="Views\Home\AdminAreas.cshtml" />
     <Content Include="Views\Home\CountBINS.cshtml" />
+    <Content Include="Views\Home\ConciliationBINS.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1231,6 +1238,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201911051545319_Fix1.resx">
       <DependentUpon>201911051545319_Fix1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911052348294_Fuck.resx">
+      <DependentUpon>201911052348294_Fuck.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

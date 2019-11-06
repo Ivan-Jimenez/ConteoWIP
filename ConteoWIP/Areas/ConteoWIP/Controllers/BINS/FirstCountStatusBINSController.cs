@@ -35,7 +35,7 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers.BINS
             return Ok(firstCountStatusBINS);
         }
 
-        // PUT: api/FirstCountStatusBINS/5
+        // Saves or updates an entry
         [ResponseType(typeof(void))]
         public IHttpActionResult PutFirstCountStatusBINS(string id, FirstCountStatusBINS firstCountStatusBINS)
         {
@@ -49,7 +49,14 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers.BINS
                 return BadRequest();
             }
 
-            db.Entry(firstCountStatusBINS).State = EntityState.Modified;
+            if (FirstCountStatusBINSExists(id))
+            {
+                db.Entry(firstCountStatusBINS).State = EntityState.Modified;
+            }
+            else
+            {
+                db.FirstCountStatusBINS.Add(firstCountStatusBINS); 
+            }
 
             try
             {
@@ -57,17 +64,10 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers.BINS
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!FirstCountStatusBINSExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return StatusCode(HttpStatusCode.Accepted);
         }
 
         // POST: api/FirstCountStatusBINS

@@ -13,7 +13,7 @@ namespace ConteoWIP.Areas.ConteoWIP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         [Required(ErrorMessage = "{0} is required")]
-        public int OrderNumber { get; set; }
+        public string OrderNumber { get; set; }
         [Required(ErrorMessage = "{0} is required")]
         public string Product { get; set; }
 

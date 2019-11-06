@@ -22,19 +22,6 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers.BINS
             return db.CountBINs;
         }
 
-        // GET: api/CountBINS/5
-        [ResponseType(typeof(CountBINS))]
-        public IHttpActionResult GetCountBINS(int id)
-        {
-            CountBINS countBINS = db.CountBINs.Find(id);
-            if (countBINS == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(countBINS);
-        }
-
         // Get products by area and count type
         public IQueryable<object> GetCountBINS(string area, string count_type)
         {
@@ -105,7 +92,7 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers.BINS
 
         // Saves or updates and entry
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutCountBINS(int id, CountBINS countBINS)
+        public IHttpActionResult PutCountBINS(string id, CountBINS countBINS)
         {
             if (!ModelState.IsValid)
             {
@@ -117,11 +104,11 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers.BINS
                 return BadRequest();
             }
 
-            if (CountBINSExists(id))
+            if (CountBINSExists(id, countBINS.AreaLine))
             {
                 try
                 {
-                    var cnt = db.CountBINs.Where(c => c.OrderNumber == countBINS.OrderNumber).First();
+                    var cnt = db.CountBINs.Where(c => c.OrderNumber == countBINS.OrderNumber && c.AreaLine == countBINS.AreaLine).First();
                     cnt.Comments = countBINS.Comments;
                     db.SaveChanges();
                 }
@@ -146,10 +133,87 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers.BINS
         }
 
         // Saves or updates the conciliation user
-        //public IHttpActionResult PutCountBINS(int order, string conciliation)
-        //{
-        //    var count = db.CountBINs.Where(c=>c.OrderNumber )
-        //}
+        public IHttpActionResult PutCountBINS(string order, string area, string conciliation)
+        {
+            order = order.Replace(' ', '+');
+            var count = db.CountBINs.Where(c => c.OrderNumber == order && c.AreaLine == area).First();
+            count.ConciliationUser = conciliation;
+            db.SaveChanges();
+            return Ok(count); 
+        }
+
+        // Saves or updates the count of the product by id and area
+        public IHttpActionResult PutCountBINS(string order, int counted, string count_type, string area)
+        {
+            var count = db.CountBINs.Where(c => c.OrderNumber == order && c.AreaLine == area).First();
+            
+            if (count_type.Equals("Count"))
+            {
+                count.Physical1 = counted;
+                count.Result = count.Physical1 - count.OrdQty;
+                count.TotalCost = count.Result * count.StdCost;
+
+                if (count.Physical1 == count.OrdQty)
+                {
+                    count.Status = "OK";
+                }
+                else if (count.Physical1 < count.OrdQty)
+                {
+                    count.Status = "Negative";
+                }
+                else
+                {
+                    count.Status = "Positive";
+                }
+            }
+            else
+            {
+                if (count.Status == "OK")
+                {
+                    return Ok("StatusOK");
+                }
+
+                count.ReCount = counted;
+                count.FinalResult = count.ReCount - count.OrdQty;
+                count.TotalCost = count.FinalResult * count.StdCost;
+                
+                if (count.ReCount == count.OrdQty)
+                {
+                    count.Status = "OK";
+                }
+                else if (count.ReCount < count.OrdQty)
+                {
+                    count.Status = "Negative";
+                }
+                else
+                {
+                    count.Status = "Positive";
+                }
+            }
+            db.SaveChanges();
+            return Ok(count);
+        }
+
+        [ResponseType(typeof(CountBINS))]
+        public IHttpActionResult GetCountBINS(string order, string area, string something)
+        {
+            var count = from counts in db.CountBINs
+                        where counts.OrderNumber == order && counts.AreaLine == area
+                        select new
+                        {
+                            Product = counts.Product,
+                            ProductName = counts.ProductName,
+                            Alias = counts.Alias,
+                            AreaLine = counts.AreaLine,
+                            OperationNumber = counts.OperationNumber,
+                            OperationDescription = counts.OperationDescription,
+                            OrderNumber = counts.OrderNumber,
+                            OrdQty = counts.OrdQty,
+                            Result = counts.ReCount,
+                            Comments = counts.Comments
+                        };
+            return Ok(count);
+        }
 
         protected override void Dispose(bool disposing)
         {
@@ -160,9 +224,9 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers.BINS
             base.Dispose(disposing);
         }
 
-        private bool CountBINSExists(int id)
+        private bool CountBINSExists(string id, string area)
         {
-            return db.CountBINs.Count(e => e.ID == id) > 0;
+            return db.CountBINs.Count(e => e.OrderNumber == id && e.AreaLine == area) > 0;
         }
     }
 }

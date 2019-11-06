@@ -172,18 +172,19 @@
                                         <div class="form-group" ng-class="{ 'has-error' : addForm.area_line.$invalid && !addForm.area_line.$pristine }">
                                             <label>Area/Line</label>
                                             <select class="form-control custom-select" ng-model="area_line" name="area_line" ng-disabled="disablearea_line" required>
-                                                <option selected>CNC</option>
-                                                <option value="Composites">Composites</option>
-                                                <option value="Decor">Decor</option>
-                                                <option value="GABRIELA TRIMMER">GABRIELA TRIMMER</option>
-                                                <option value="LUP/Press/CNC">LUP/Press/CNC</option>
-                                                <option value="Metals">Metals</option>
-                                                <option value="Press">Press</option>
-                                                <option value="SAL #1">SAL #1</option>
-                                                <option value="SAL #2">SAL #2</option>
-                                                <option value="SAL #3">SAL #3</option>
-                                                <option value="SAL #5">SAL #5</option>
-                                                <option value="SAL #6">SAL #6</option>
+                                                <option value="HOLD">HOLD</option>
+                                                <option value="INSPHOLD">INSPHOLD</option>
+                                                <option value="MOVECNC1">MOVECNC1</option>
+                                                <option value="MOVEDEC">MOVEDEC</option>
+                                                <option value="MOVEDO">MOVEDO</option>
+                                                <option value="MOVEFIL1">MOVEFIL1</option>
+                                                <option value="MOVEFIL2">MOVEFIL2</option>
+                                                <option value="MOVEFIL3">MOVEFIL3</option>
+                                                <option value="MOVEPNL1">MOVEPNL1</option>
+                                                <option value="MOVEPNL2">MOVEPNL2</option>
+                                                <option value="MRB-CUU">MRB-CUU</option>
+                                                <option value="MRB-CUU2">MRB-CUU2</option>
+                                                <option value="QA">QA</option>
                                             </select>
                                             <p ng-show="selectCountForm.areaLine.$invalid && !selectCountForm.areaLine.$pristine" class="text-danger">Select Count.</p>
                                         </div>

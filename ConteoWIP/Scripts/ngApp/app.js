@@ -45,6 +45,9 @@ app.config(function ($routeProvider) {
         .when('/ConciliationWIP', {
             templateUrl: 'ConciliationWIP'
         })
+        .when('/ConciliationBINS', {
+            templateUrl: 'conciliationBINS'
+        })
         .when('/AdminUsers', {
             templateUrl: 'AdminUsers'
         })
@@ -414,6 +417,192 @@ app.controller("count-BINS-controller", ($scope, $http) => {
     $scope.showCountForm = false;
     $scope.showSelectCountForm = true;
 
+    $scope.cancelCounting = () => {
+        $scope.showSelectCountForm = true;
+        $scope.showCountForm = false;
+    }
+
+    $scope.finishCounting = () => {
+        $scope.showFinishOptions = true;
+        $scope.showCountForm = false;
+        $scope.showDownloadBtn = true;
+    }
+
+    $scope.count = (order, counted, countType, area) => {
+
+        var newArea = area;
+        // if (area.split('#')[0] === "SAL ") {
+        //     newArea = "SAL_" + area.split('#')[1];
+        // }
+
+        cleanAddForm();
+        $http.get(`${uriApi}/api/CountBINS/?order=${order}&area=${area}&something=FuckYou`).then((res) => {
+            console.log("count Result Exist => ", res);
+            if (res.data.length > 0) {
+                //saveCount(order, $scope.counted, $scope.countType);
+                $scope.orderNumber = "";
+                $scope.counted = "";
+                if (res.data[0].AreaLine === area) {
+                    saveCount(order, counted, countType, newArea);
+                    $http.get(`${uriApi}/api/CountBINS/?area=${newArea}&count_type=${countType}`, {
+                        OrderNumber: $scope.order_number,
+                        Product: $scope.product,
+                    }).then((response) => {
+                        $scope.products = response.data;
+                    });
+                } //else {
+                //     //alert("doesnt belong to this area");
+                //     // TODO: This isnt working fixed 
+                //     disableForm(false);
+                //     Swal.fire({
+                //         title: "Don't belongs to this area",
+                //         text: "This asset belogs to the " + res.data[0].AreaLine + " area.",
+                //         type: 'warning',
+                //         showCancelButton: false,
+                //         confirmButtonColor: '#3085d6',
+                //         cancelButtonColor: '#d33',
+                //         confirmButtonText: 'Ok'
+                //     }).then((result) => {
+                //         if (result.value) {
+                //             $scope.showComments = true;
+                //             $scope.product = res.data[0].Product;
+                //             $scope.productName = res.data[0].ProductName;
+                //             $scope.alias = res.data[0].Alias;
+                //             $scope.area_line = res.data[0].AreaLine;
+                //             $scope.operationNumber = res.data[0].OperationNumber;
+                //             $scope.operationDescription = res.data[0].OperationDescription;
+                //             $scope.order_number = res.data[0].OrderNumber;
+                //             $scope.ord_qty = res.data[0].OrdQty;
+                //             $scope.counted_form = counted;
+                //             $scope.modalTitle = "Found";
+                //             $("#addModal").modal({ show: true });
+                //         }
+                //     })
+
+                // }
+            } else {
+                Swal.fire({
+                    title: order + ' Not Found',
+                    text: "Do you want to add it?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, add it!'
+                }).then((result) => {
+                    if (result.value) {
+                        cleanAddForm();
+                        $scope.order_number = order;
+                        $scope.counted_form = counted;
+                        $scope.modalTitle = "New";
+                        $("#addModal").modal({ show: true });
+                        //Swal.fire(
+                        //    'Deleted!',
+                        //    'Your file has been deleted.',
+                        //    'success'
+                        //)
+                    }
+                })
+            }
+        }).catch((error) => {
+            console.log("count Exist Error => ", error);
+            Swal.fire({
+                type: 'error',
+                title: 'Error',
+                text: error.statusText,
+            });
+            if (error.status === 404) {
+                alert("product not found");
+            }
+        });
+
+    }
+
+    $scope.countAgain = () => {
+        $scope.showFinishOptions = false;
+        $scope.showCountForm = true;
+        $scope.showDownloadBtn = false;
+    }
+
+    $scope.closeArea = (area, countType) => {
+
+        var newArea = area;
+        // if (area.split('#')[0] === "SAL ") {
+        //     newArea = "SAL_" + area.split('#')[1];
+        // }
+
+        Swal.fire({
+            title: 'Close Area',
+            text: "Do you to close "+area+"?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Close it!'
+        }).then((result) => {
+            if (result.value) {
+                if (countType === "Count") {
+                    $http.put(`${uriApi}/api/FirstCountStatusBINS/?id=${newArea}&`, { AreaLine: area, Finish: true }).then((res) => {
+                        console.log("closeArea Result => " + res.data);
+                        $scope.showSelectCountForm = true;
+                        $scope.showFinishOptions = false;
+                    }).catch((error) => {
+                        console.log("closeArea Error => ", error);
+                    });
+                } else {
+                    $http.put(`${uriApi}/api/ReCountStatusBINS/?id=${newArea}&`, { AreaLine: area, Finish: true }).then((res) => {
+                        console.log("closeArea Result => " + res.data);
+                    }).catch((error) => {
+                        console.log("closeArea Error => ", error);
+                    });
+                }
+                $scope.showDownloadBtn = false;
+            }
+        })
+    }
+
+    $scope.showDiscrepancies = (area, countType) => {
+        $http.get(`${uriApi}/api/DiscrepanciesBINS/?area=${area}&count_type=${countType}`).then((res) => {
+            $scope.products = res.data;
+        }).catch((error) => {
+            console.log(error.status);
+        });
+    }
+
+    $scope.addOrUpdate = () => {
+        var comment = "";
+        if ($scope.modalTitle === "New") comment = "New@" + $scope.areaLine + "@";
+        else comment = "Found@" + $scope.counted_form + "@" + $scope.areaLine + "@";
+
+        $http.put(`${uriApi}/api/CountBINS/${$scope.order_number}`, {
+            Product: $scope.product,
+            OrderNumber: $scope.order_number,
+            Alias: $scope.alias,
+            ProductName: $scope.productName,
+            AreaLine: $scope.area_line,
+            OperationNumber: $scope.operationNumber,
+            OperationDescription: $scope.operationDescription,
+            OrdQty: $scope.ord_qty,
+            Comments: comment + $scope.comments,
+        }).then((res) => {
+            console.log("addOrUpdate Result => ", res.data);
+            saveCount($scope.order_number, $scope.counted_form, $scope.countType, $scope.areaLine);
+            $scope.orderNumber = "";
+            $scope.counted = "";
+            Swal.fire(
+                "Added it!",
+                "The asset was added successfully.",
+                "success"
+            );
+        }).catch((error) => {
+            console.log("addOrUpdate Error => ", error.data);
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: error.data,
+            });
+        });
+    }
 
     $scope.isAreaClosed = (area, countType) => {
         if (countType === "Count") {
@@ -484,7 +673,46 @@ app.controller("count-BINS-controller", ($scope, $http) => {
         $scope.showSelectCountForm = false;
         console.log($scope.countType + ", " + $scope.areaLine);
     }
-    
+
+    function saveCount(order, counted, countType, area) {
+        $http.put(`${uriApi}/api/CountBINS/?order=${order}&counted=${counted}&count_type=${countType}&area=${area}`).then((res) => {
+            console.log("saveCount Result => ", res.data);
+            if (res.data === "StatusOK") {
+                Swal.fire(
+                    "Status OK!",
+                    "This asset is already counted and has an Ok Status.",
+                    "warning"
+                );
+            } else {
+                Swal.fire(
+                    "Counted!",
+                    "The count for " + order + " was saved successfully.",
+                    "success"
+                );
+            }
+        }).catch(error => {
+            console.log(error);
+            Swal.fire({
+                type: 'error',
+                title: 'Error...',
+                text: error.statusText,
+            });
+        });
+    }
+
+    function cleanAddForm() {
+        $scope.product = "";
+        $scope.productName = "";
+        $scope.alias = "";
+        $scope.area_line = "";
+        $scope.operationNumber = "";
+        $scope.operationDescription= "";
+        $scope.order_number = "";
+        $scope.ord_qty = "";
+        $scope.counted_form = "";
+        $scope.comments = "";
+        $scope.showComments = false;
+    }
 });
 
 
@@ -551,10 +779,72 @@ app.controller("conciliation-WIP-controller", ($scope, $http) => {
 });
 
 
+/**********************************************************************************************
+ ****************************** Conciliation BINS Controller *********************************
+ **********************************************************************************************/
+app.controller("conciliation-BINS-controller", ($scope, $http) => {
+    $http.get(`${uriApi}/api/CountBINS/`).then((res) => {
+        $scope.products = res.data;
+    }).catch((error) => {
+        snackbar(error.data);
+    });
+
+    $scope.showAll = () => {
+        showAll();
+    }
+
+    $scope.showDiscrepancies = () => {
+        if ($scope.area_line === undefined || $scope.areaLine === '') {
+            $http.get(`${uriApi}/api/DiscrepanciesBINS/`).then((res) => {
+                $scope.products = res.data;
+            }).catch((error) => {
+                snackbar(error.data);
+            });
+        } else {
+            $http.get(`${uriApi}/api/DiscrepanciesBINS/?area=${$scope.area_line}&count_type=ReCount`).then((res) => {
+                $scope.products = res.data;
+            }).catch((error) => {
+                snackbar(error.data);
+            });
+        }
+    }
+
+    $scope.select = (order, area) => {
+        $scope.orderConciliation = order;
+        $scope.areaConciliation = area;
+    }
+
+    $scope.saveConciliation = (order, area, conciliation) => {
+        $http.put(`${uriApi}/api/CountBINS/?order=${order}&area=${area}&conciliation=${conciliation}`).then((res) => {
+            alert("saved");
+        }).catch((error) => {
+            snackbar(error.data);
+        });
+    }
+
+    $scope.downloadAllDiscrepancies = () => {
+        window.open(`${uriApi}/api/DataBINS/?area=ThisShitIsFuck&count_type=All`);
+    }
+
+    /*************************************************************************************
+     *************************** Util Functions ******************************************
+     *************************************************************************************/
+
+    function showAll() {
+        $http.get(`${uriApi}/api/CountBINS/?area=${$scope.area_line}&count_type=Count`).then((res) => {
+            $scope.products = res.data;
+        }).catch((error) => {
+            snackbar(error.data);
+        });
+    }
+});
+
+
 /*********************************************************************************************
- ******************************* Admin Areas Controller **************************************
+ ****************************** Admin Areas Controller *************************************
  *****************************************************+++++++++++++++*************************/
 app.controller("adminAreas-Controller", ($scope, $http) => {
+    // Gets all WIP areas status
     $http.get(`${uriApi}/api/FirstCountStatus/`).then((res) => {
         console.log(res.data);
         $scope.wipFirst = res.data;
@@ -562,6 +852,15 @@ app.controller("adminAreas-Controller", ($scope, $http) => {
         snackbar(error.data);
     });
 
+    // Gets all BINS areas status
+    $http.get(`${uriApi}/api/FirstCountStatusBINS/`).then((res) => {
+        console.log(res.data);
+        $scope.binsFirst = res.data;
+    }).catch((error) => {
+        snackbar(error.data);
+    });
+
+    // WIP
     $http.get(`${uriApi}/api/ReCountStatus/`).then((res) => {
         console.log(res.data);
         $scope.wipRecount = res.data;
@@ -569,6 +868,15 @@ app.controller("adminAreas-Controller", ($scope, $http) => {
         snackbar(error.data);
     });
 
+    // BINS
+    $http.get(`${uriApi}/api/ReCountStatusBINS/`).then((res) => {
+        console.log(res.data);
+        $scope.binsRecount = res.data;
+    }).catch((error) => {
+        snackbar(error.data);
+    });
+
+    // WIP
     $scope.openWipFirst = (area) => {
         var newArea = area;
         if (area.split('#')[0] === 'SAL ') {
@@ -582,6 +890,21 @@ app.controller("adminAreas-Controller", ($scope, $http) => {
         });
     }
 
+    // BINS
+    $scope.openBinsFirst = (area) => {
+        var newArea = area;
+        // if (area.split('#')[0] === 'SAL ') {
+        //     newArea = 'SAL_' + area.split('#')[1];
+        // }
+
+        $http.put(`${uriApi}/api/FirstCountStatusBINS/${newArea}`, { AreaLine: area, Finish: false }).then((res) => {
+            snackbar(res.data);
+        }).catch((error) => {
+            snackbar(error.data);
+        });
+    }
+
+    // WIP
     $scope.openWipRecount = (area) => {
         var newArea = area;
         if (area.split('#')[0] === 'SAL ') {
@@ -589,6 +912,20 @@ app.controller("adminAreas-Controller", ($scope, $http) => {
         }
 
         $http.put(`${uriApi}/api/ReCountStatus/${newArea}`, { AreaLine: area, Finish: false }).then((res) => {
+            snackbar(res.data);
+        }).catch((error) => {
+            snackbar(error.data);
+        });
+    }
+
+    //BINS
+    $scope.openBinsRecount = (area) => {
+        var newArea = area;
+        // if (area.split('#')[0] === 'SAL ') {
+        //     newArea = 'SAL_' + area.split('#')[1];
+        // }
+
+        $http.put(`${uriApi}/api/ReCountStatusBINS/${newArea}`, { AreaLine: area, Finish: false }).then((res) => {
             snackbar(res.data);
         }).catch((error) => {
             snackbar(error.data);

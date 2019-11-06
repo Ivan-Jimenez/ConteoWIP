@@ -1,0 +1,136 @@
+﻿<div ng-controller="conciliation-BINS-controller">
+    <div class="index animated fadeInDown slow">
+        <h3>Conciliation BINS</h3>
+        <hr />
+
+        <div class="row">
+            <div class="col-lg-1 align-content-lg-end">
+                <ion-icon name="search" size="large"></ion-icon>
+            </div>
+            <div class="col-lg-6">
+                <input type="search" class="form-control width-box " placeholder="Search..." ng-model="search" />
+            </div>
+            <div class="col-lg-3">
+                @* Starts area select *@
+                <div class="form-group" ng-class="{ 'has-error' : addForm.area_line.$invalid && !addForm.area_line.$pristine }">
+                    <label>Area/Line</label>
+                    <select class="form-control custom-select" ng-model="area_line" name="area_line" ng-disabled="disablearea_line" required>
+                        <option value="HOLD">HOLD</option>
+                        <option value="INSPHOLD">INSPHOLD</option>
+                        <option value="MOVECNC1">MOVECNC1</option>
+                        <option value="MOVEDEC">MOVEDEC</option>
+                        <option value="MOVEDO">MOVEDO</option>
+                        <option value="MOVEFIL1">MOVEFIL1</option>
+                        <option value="MOVEFIL2">MOVEFIL2</option>
+                        <option value="MOVEFIL3">MOVEFIL3</option>
+                        <option value="MOVEPNL1">MOVEPNL1</option>
+                        <option value="MOVEPNL2">MOVEPNL2</option>
+                        <option value="MRB-CUU">MRB-CUU</option>
+                        <option value="MRB-CUU2">MRB-CUU2</option>
+                        <option value="QA">QA</option>
+                    </select>
+                    <p ng-show="selectCountForm.areaLine.$invalid && !selectCountForm.areaLine.$pristine" class="text-danger">Select Count.</p>
+                </div>
+                @* Ends area select *@
+            </div>
+            <div class="col-lg-2 align-content-end">
+                <div class="btn-group">
+                    <button class="btn btn-verde" type="button" ng-click="showAll()">Show All <ion-icon name="close"></button>
+                    <button class="btn btn-naranja" type="button" ng-click="showDiscrepancies()">Discrepancies <ion-icon name="md-checkmark"></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            @* Start Conciliation Table *@
+            <div class="table-responsive overflow-auto" style="height: 500px">
+                <table class="table table-sm table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th class="info-header">Product</th>
+                            <th class="info-header">Alias</th>
+                            <th class="info-header">Area/Line</th>
+                            <th class="info-header">Op. Number</th>
+                            <th class="info-header">Op. Desc.</th>
+                            <th class="info-header">Ord. Num.</th>
+                            <th class="info-header">Ord. Qty.</th>
+                            <th class="info-header">Physical</th>
+                            <th class="info-header">Result</th>
+                            <th class="info-header">Comments</th>
+                            <th class="info-header">Recount</th>
+                            <th class="info-header">Final Res.</th>
+                            <th class="info-header">Status</th>
+                            <th class="info-header">Conciation User</th>
+                            <th class="info-header">Std Cost</th>
+                            <th class="info-header">Total Cost</th>
+                            <th class="info-header"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="product in products | filter: search">
+                            <th class="info-table">{{product.Product}}</th>
+                            <th class="info-table">{{product.Alias}}</th>
+                            <th class="info-table">{{product.AreaLine}}</th>
+                            <th class="info-table">{{product.OperationNumber}}</th>
+                            <th class="info-table">{{product.OperationDescription}}</th>
+                            <th class="info-table">{{product.OrderNumber}}</th>
+                            <th class="info-table">{{product.OrdQty}}</th>
+                            <th class="info-table">{{product.Physical1}}</th>
+                            <th class="info-table">{{product.Result}}</th>
+                            <th class="info-table">{{product.Comments}}</th>
+                            <th class="info-table">{{product.ReCount}}</th>
+                            <th class="info-table">{{product.FinalResult}}</th>
+                            <th class="info-table">{{product.Status}}</th>
+                            <th class="info-table">{{product.ConciliationUser}}</th>
+                            <th class="info-table">{{product.StdCost}}</th>
+                            <th class="info-table">{{product.TotalCost}}</th>
+                            <th class="info-table"><button class="btn btn-naranja" data-toggle="modal" data-target="#conciliationModal" ng-click="select(product.OrderNumber, product.AreaLine)"><ion-icon name="construct"></ion-icon></button></th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            @* Ends Conciliation Table *@
+        </div>
+        <div class="row">
+            <div class="col-lg-11"></div>
+            <div class="col-lg-1">
+                <button class="btn btn-azul" ng-click="downloadAllDiscrepancies()">Download Discrepancies</button>
+            </div>
+        </div>
+    </div>
+
+    @* Start conciliation modal *@
+    <div class="modal fade" id="conciliationModal" tabindex="-1" role="dialog" aria-labelledby="conciliationModalLabel" aria-hiden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <center>
+                        <div class="form-card">
+                            <form name="conciliationForm" novalidate>
+                                <h3>Conciliation Order {{orderConciliation}}</h3>
+                                <hr />
+                                <div class="form-group" ng-class="{ 'has-error' : conciliationForm.conciliationResult.$invalid && !conciliationForm.conciliationResult.$pristine }">
+                                    <label>Conciliation Result</label>
+                                    <select class="form-control custom-select" ng-model="conciliationResult" name="conciliationResult" required>
+                                        <option value="Fixed">Fixed</option>
+                                        <option value="Can't Fix">Can't Fix</option>
+                                        <option value="Pending">Pending</option>
+                                    </select>
+                                    <label>{{areaConciliation}}</label>
+                                    <p ng-show="selectCountForm.areaLine.$invalid && !selectCountForm.areaLine.$pristine" class="text-danger">Select Count.</p>
+
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-naranja" data-dismiss="modal">Cancel <ion-icon name="ios-return-left"></ion-icon></button>
+                                        <button type="button" class="btn btn-default btn-azul" ng-click="saveConciliation(orderConciliation, areaConciliation, conciliationResult)" ng-disabled="conciliationForm.$invalid" data-dismiss="modal">Save <ion-icon name="md-checkmark"></ion-icon></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* Ends concilition modal *@
+
+</div>
