@@ -49,11 +49,11 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
                 string query;
 
                 if (count_type.Equals("Count"))
-                    query = String.Format("SELECT Product, OrderNumber, OperationDescription, OrdQty FROM Counts WHERE AreaLine='{0}' AND Physical1 != OrdQty OR ISNULL(Physical1, 0) = 0;", area);
+                    query = String.Format("SELECT Product, OrderNumber, OperationDescription, OrdQty FROM Counts WHERE AreaLine='{0}' AND Physical1 != OrdQty OR (ISNULL(Physical1, 0) = 0 AND AreaLine='{0}');", area);
                 else if (count_type.Equals("All"))
                     query = "SELECT * FROM Counts WHERE Status != 'OK' OR ISNULL(Status, 'Fuck')='Fuck';;";
                 else
-                    query = String.Format("SELECT Product, OrderNumber, OperationDescription, OrdQty FROM Counts WHERE AreaLine='{0}' AND ReCount != OrdQty OR ISNULL(ReCount, 0) = 0;", area);
+                    query = String.Format("SELECT Product, OrderNumber, OperationDescription, OrdQty FROM Counts WHERE AreaLine='{0}' AND ReCount != OrdQty OR (ISNULL(ReCount, 0) = 0 AND AreaLine='{0}');", area);
 
                 SqlCommand cmmd = new SqlCommand(query, sqlConn);
                 using (var adapter = new SqlDataAdapter(cmmd))

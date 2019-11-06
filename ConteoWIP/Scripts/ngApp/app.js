@@ -61,7 +61,7 @@ app.config(function ($routeProvider) {
 
 
 /**********************************************************************************************
- ******************************** Count WIP Controller ****************************************
+ *******************************+ Count WIP Controller +**************************************
  **********************************************************************************************/
 app.controller("count-WIP-controller", ($scope, $http) => {
 
@@ -406,7 +406,7 @@ app.controller("count-WIP-controller", ($scope, $http) => {
 
 
 /**********************************************************************************************
- ******************************* Count BINS Controller ****************************************
+ ******************************+ Count BINS Controller +***************************************
  **********************************************************************************************/
 app.controller("count-BINS-controller", ($scope, $http) => {
     var countingType = "";
@@ -700,6 +700,10 @@ app.controller("count-BINS-controller", ($scope, $http) => {
         });
     }
 
+    $scope.downloadDiscrepancies = (area, countType) => {
+        window.open(`${uriApi}/api/DataBINS/?area=${area}&count_type=${countType}`);
+    }
+
     function cleanAddForm() {
         $scope.product = "";
         $scope.productName = "";
@@ -717,7 +721,7 @@ app.controller("count-BINS-controller", ($scope, $http) => {
 
 
 /**********************************************************************************************
- **************************** Conciliation WIP Controller *************************************
+ ***************************+ Conciliation WIP Controller +************************************
  **********************************************************************************************/
 app.controller("conciliation-WIP-controller", ($scope, $http) => {
 
@@ -762,7 +766,7 @@ app.controller("conciliation-WIP-controller", ($scope, $http) => {
     }
 
     $scope.downloadAllDiscrepancies = () => {
-        window.open(`${uriApi}/api/Data/?area=ThisShitIsFuck&count_type=All`);
+        window.open(`${uriApi}/api/Data/?area=all&count_type=All`);
     }
 
     /*************************************************************************************
@@ -780,7 +784,7 @@ app.controller("conciliation-WIP-controller", ($scope, $http) => {
 
 
 /**********************************************************************************************
- ****************************** Conciliation BINS Controller *********************************
+ *****************************+ Conciliation BINS Controller +********************************
  **********************************************************************************************/
 app.controller("conciliation-BINS-controller", ($scope, $http) => {
     $http.get(`${uriApi}/api/CountBINS/`).then((res) => {
@@ -841,7 +845,7 @@ app.controller("conciliation-BINS-controller", ($scope, $http) => {
 
 
 /*********************************************************************************************
- ****************************** Admin Areas Controller *************************************
+ *****************************+ Admin Areas Controller +*************************************
  *****************************************************+++++++++++++++*************************/
 app.controller("adminAreas-Controller", ($scope, $http) => {
     // Gets all WIP areas status
@@ -934,7 +938,7 @@ app.controller("adminAreas-Controller", ($scope, $http) => {
 });
 
 /**********************************************************************************************
- ********************************* Admin Users Controller *************************************
+ ********************************+ Admin Users Controller +************************************
  **********************************************************************************************/
 var id_sistema = 1;
 app.controller("adminUsers-controller", ($scope, $http) => {
