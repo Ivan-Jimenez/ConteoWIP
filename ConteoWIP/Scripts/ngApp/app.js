@@ -827,7 +827,7 @@ app.controller("conciliation-BINS-controller", ($scope, $http) => {
     }
 
     $scope.downloadAllDiscrepancies = () => {
-        window.open(`${uriApi}/api/DataBINS/?area=ThisShitIsFuck&count_type=All`);
+        window.open(`${uriApi}/api/DataBINS/?area=all&count_type=All`);
     }
 
     /*************************************************************************************

@@ -145,13 +145,22 @@ namespace ConteoWIP.Areas.ConteoWIP.Controllers
             var count = db.Count.Where(c => c.OrderNumber == order).First();
             if (count_type.Equals("Count"))
             {
-                if (count.Physical1 == null)
-                {
-                    count.Physical1 = counted;
-                }
-                else if (count.AreaLine != area)
+                //if (count.Physical1 == null)
+                //{
+                //    count.Physical1 = counted;
+                //}
+                //else if (count.AreaLine != area)
+                //{
+                //    count.Physical1 += counted;
+                //}
+
+                if (count.AreaLine != area && count.Physical1 != null)
                 {
                     count.Physical1 += counted;
+                }
+                else
+                {
+                    count.Physical1 = counted;
                 }
 
                 count.Result = count.Physical1 - count.OrdQty;
